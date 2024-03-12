@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Provider2
+server:
+  port: 8020

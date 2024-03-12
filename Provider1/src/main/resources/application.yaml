@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Provider1
+server:
+  port: 8010
