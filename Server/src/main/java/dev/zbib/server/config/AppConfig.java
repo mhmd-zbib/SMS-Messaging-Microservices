@@ -1,4 +1,4 @@
-package dev.zbib.server;
+package dev.zbib.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
