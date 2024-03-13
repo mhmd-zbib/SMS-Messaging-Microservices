@@ -1,8 +1,8 @@
-package dev.zbib.server.service;
+package dev.zbib.server.provider;
 
 import dev.zbib.server.dto.SmsProviderRequest;
 
-public interface SmsProviderService {
+public interface SmsProvider {
 
     String sendSms(SmsProviderRequest smsProviderRequest);
 

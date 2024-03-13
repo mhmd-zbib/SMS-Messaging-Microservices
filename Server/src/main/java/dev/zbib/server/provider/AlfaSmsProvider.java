@@ -1,9 +1,10 @@
-package dev.zbib.server.service.impl;
+package dev.zbib.server.provider;
 
 import dev.zbib.server.dto.SmsProviderRequest;
-import dev.zbib.server.service.SmsProviderService;
+import org.springframework.stereotype.Service;
 
-public class AlfaSmsServiceImpl  implements SmsProviderService {
+@Service
+public class AlfaSmsProvider implements SmsProvider {
 
 
     @Override
