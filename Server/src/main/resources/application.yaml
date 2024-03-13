@@ -3,3 +3,9 @@ spring:
     name: Server
 server:
   port: 8000
+
+provider:
+  mtc:
+    url: http://localhost:8020
+  alfa:
+    url: http://localhost:8010

@@ -3,7 +3,7 @@ package dev.zbib.server.dto;
 import lombok.Getter;
 
 @Getter
-public class ProviderRequest {
+public class SmsProviderRequest {
 
     private String message;
     private String phoneNumber;

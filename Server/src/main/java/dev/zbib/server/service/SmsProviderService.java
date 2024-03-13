@@ -1,7 +1,9 @@
 package dev.zbib.server.service;
 
-import reactor.core.publisher.Mono;
+import dev.zbib.server.dto.SmsProviderRequest;
 
-public interface SmsProviderService<R, T> {
-    Mono<R> sendSms(T request);
+public interface SmsProviderService {
+
+    String sendSms(SmsProviderRequest smsProviderRequest);
+
 }
