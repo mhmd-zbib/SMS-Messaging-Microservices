@@ -8,10 +8,10 @@ import reactor.core.publisher.Mono;
 @Service
 public class SmsSendingService {
 
-    private final SmsProviderSelectorService providerSelector;
+    private final SmsProviderFactory providerSelector;
 
     @Autowired
-    public SmsSendingService(SmsProviderSelectorService providerSelector) {
+    public SmsSendingService(SmsProviderFactory providerSelector) {
         this.providerSelector = providerSelector;
     }
 
