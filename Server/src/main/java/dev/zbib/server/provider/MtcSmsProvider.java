@@ -31,10 +31,9 @@ public class MtcSmsProvider implements SmsProvider {
 
         return webClient.build().post()
                 .uri("http://localhost:8020")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .bodyValue(request)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
                 .retrieve()
                 .bodyToMono(String.class);
-
     }
 }
