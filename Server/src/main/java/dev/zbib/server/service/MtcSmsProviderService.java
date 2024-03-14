@@ -2,6 +2,7 @@ package dev.zbib.server.service;
 
 import dev.zbib.server.model.request.MtcSmsRequest;
 import dev.zbib.server.model.request.SmsProviderRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -12,17 +13,19 @@ import reactor.core.publisher.Mono;
 public class MtcSmsProviderService implements ISmsProviderService {
 
 
-    private final WebClient.Builder webClient;
+    private final WebClient webClient;
 
     @Value("${provider.url}")
     private String providerUrl;
 
     @Value("${provider.routes.mtc}")
-    private String  mtcUrl;
+    private String mtcUrl;
 
+    @Autowired
     public MtcSmsProviderService(WebClient.Builder webClient) {
-        this.webClient = webClient.baseUrl(providerUrl);
+        this.webClient = webClient.baseUrl(this.providerUrl).build();
     }
+
 
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
@@ -33,8 +36,8 @@ public class MtcSmsProviderService implements ISmsProviderService {
                 .language(smsProviderRequest.getLanguage())
                 .build();
 
-        return webClient.build().post()
-                .uri(mtcUrl)
+        return webClient.post()
+                .uri("/mtc/sms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
