@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/alfa")
 public class AlfaController {
 
-    @GetMapping
+    @GetMapping("/sms")
     public ResponseEntity<String> message() {
         System.out.println("Sent!");
         return ResponseEntity.ok("Hello World");

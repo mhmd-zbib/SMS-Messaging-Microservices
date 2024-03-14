@@ -7,24 +7,27 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-public class AlfaSmsService implements ISmsProviderService {
+public class AlfaSmsProviderService implements ISmsProviderService {
 
 
 
-    @Value("${provider.alfa.url}")
-    private String alfaSmsUrl;
+    @Value("${provider.url}")
+    private String providerUrl;
+
+    @Value("${provider.routes.alfa}")
+    private String alfaUrl;
 
     private final WebClient.Builder webClient;
 
-    public AlfaSmsService(WebClient.Builder webClient) {
-        this.webClient = webClient.baseUrl(alfaSmsUrl);
+    public AlfaSmsProviderService(WebClient.Builder webClient) {
+        this.webClient = webClient.baseUrl(providerUrl);
     }
 
 
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
         return webClient.build().get()
-                .uri("http://localhost:8010/")
+                .uri(alfaUrl)
                 .retrieve()
                 .bodyToMono(String.class);
     }
