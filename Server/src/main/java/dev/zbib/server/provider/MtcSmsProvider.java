@@ -1,7 +1,9 @@
 package dev.zbib.server.provider;
 
+import dev.zbib.server.dto.MtcSmsRequest;
 import dev.zbib.server.dto.SmsProviderRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -19,7 +21,7 @@ public class MtcSmsProvider implements SmsProvider {
     }
 
     @Override
-    public String sendSms(SmsProviderRequest smsProviderRequest) {
+    public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
 
         MtcSmsRequest request = MtcSmsRequest.builder()
                 .message(smsProviderRequest.getMessage())
@@ -27,12 +29,15 @@ public class MtcSmsProvider implements SmsProvider {
                 .language(smsProviderRequest.getLanguage())
                 .build();
 
-        return webClient.post()
-                .uri("/message")
-                .body(Mono.just(request), MtcSmsRequest.class)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        System.out.println(request.toString());
 
+        webClient.post()
+                .uri("/message")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(String.class);
+
+        return Mono.just("OK");
     }
 }

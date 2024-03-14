@@ -21,7 +21,7 @@ public class ProviderSelector {
         this.alfaSmsProvider = alfaSmsProvider;
     }
 
-    public SmsProvider getSmsProvider() {
+    public  SmsProvider getSmsProvider() {
         int choice = random.nextInt(2) + 1; // Generates 1 or 2
         if (choice == 1) {
             return mtcSmsProvider;
