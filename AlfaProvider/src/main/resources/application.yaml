@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: AlfaProvider
+server:
+  port: 8010

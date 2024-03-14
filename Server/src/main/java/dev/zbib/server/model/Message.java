@@ -16,6 +16,9 @@ public class Message {
     @Id
     @GeneratedValue
     private Long id;
+
     private String message;
+
+    private String phoneNumber;
 
 }

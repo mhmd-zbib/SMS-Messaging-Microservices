@@ -1,5 +1,5 @@
 spring:
   application:
-    name: Provider2
+    name: MtcProvider
 server:
   port: 8020

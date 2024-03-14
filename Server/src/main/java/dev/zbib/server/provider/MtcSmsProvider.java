@@ -11,13 +11,13 @@ import reactor.core.publisher.Mono;
 @Service
 public class MtcSmsProvider implements SmsProvider {
 
-    private final WebClient webClient;
 
+    private final WebClient.Builder webClient;
     @Value("${provider.mtc.url}")
-    private String MtcSmsUrl;
+    private String mtcSmsUrl;
 
-    public MtcSmsProvider(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(MtcSmsUrl).build();
+    public MtcSmsProvider(WebClient.Builder webClient) {
+        this.webClient = webClient;
     }
 
     @Override
@@ -29,15 +29,12 @@ public class MtcSmsProvider implements SmsProvider {
                 .language(smsProviderRequest.getLanguage())
                 .build();
 
-        System.out.println(request.toString());
-
-        webClient.post()
-                .uri("/message")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(request)
+        return webClient.build().post()
+                .uri("http://localhost:8020")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .bodyValue(request)
                 .retrieve()
                 .bodyToMono(String.class);
 
-        return Mono.just("OK");
     }
 }
