@@ -1,7 +1,7 @@
-package dev.zbib.server.provider;
+package dev.zbib.server.service;
 
-import dev.zbib.server.dto.MtcSmsRequest;
-import dev.zbib.server.dto.SmsProviderRequest;
+import dev.zbib.server.model.request.MtcSmsRequest;
+import dev.zbib.server.model.request.SmsProviderRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -9,14 +9,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-public class MtcSmsProvider implements SmsProvider {
+public class MtcSmsService implements ISmsProviderService {
 
 
     private final WebClient.Builder webClient;
     @Value("${provider.mtc.url}")
     private String mtcSmsUrl;
 
-    public MtcSmsProvider(WebClient.Builder webClient) {
+    public MtcSmsService(WebClient.Builder webClient) {
         this.webClient = webClient;
     }
 

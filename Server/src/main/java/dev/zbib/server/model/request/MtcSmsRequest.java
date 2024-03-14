@@ -1,4 +1,4 @@
-package dev.zbib.server.dto;
+package dev.zbib.server.model.request;
 
 import lombok.*;
 

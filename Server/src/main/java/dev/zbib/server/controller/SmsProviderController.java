@@ -1,6 +1,6 @@
 package dev.zbib.server.controller;
 
-import dev.zbib.server.dto.SmsProviderRequest;
+import dev.zbib.server.model.request.SmsProviderRequest;
 import dev.zbib.server.service.MessageProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
