@@ -21,6 +21,6 @@ public class ScheduleMessageService {
                 .message(code)
                 .build();
         String messageCode  = messageService.sendMessage(messageRequest).getMessage();
-        System.out.println("Your current code is +" + messageCode);
+        System.out.println("Your current code is " + messageCode);
     }
 }

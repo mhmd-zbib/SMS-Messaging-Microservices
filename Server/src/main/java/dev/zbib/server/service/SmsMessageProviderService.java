@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-public class SmsSendingService {
+public class SmsMessageProviderService {
 
     private final SmsProviderFactory providerSelector;
 
     @Autowired
-    public SmsSendingService(SmsProviderFactory providerSelector) {
+    public SmsMessageProviderService(SmsProviderFactory providerSelector) {
         this.providerSelector = providerSelector;
     }
 
