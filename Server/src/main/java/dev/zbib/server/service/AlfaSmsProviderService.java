@@ -10,24 +10,21 @@ import reactor.core.publisher.Mono;
 @Service
 public class AlfaSmsProviderService implements ISmsProviderService {
 
-
     private final WebClient webClient;
 
-    @Value("${provider.url}")
-    private String providerUrl;
+
     @Value("${provider.routes.alfa}")
     private String alfaUrl;
 
     @Autowired
-    public AlfaSmsProviderService(WebClient.Builder webClient) {
-        this.webClient = webClient.baseUrl(this.providerUrl).build();
+    public AlfaSmsProviderService(WebClient webClient) {
+        this.webClient = webClient;
     }
-
 
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
         return webClient.get()
-                .uri("http://localhost/alfa/sms")
+                .uri(alfaUrl)
                 .retrieve()
                 .bodyToMono(String.class);
     }
