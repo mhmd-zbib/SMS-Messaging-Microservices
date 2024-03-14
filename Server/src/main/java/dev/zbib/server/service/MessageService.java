@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 public interface MessageService {
     Message sendMessage(MessageRequest messageRequest);
 
-    Message getMessage(Long id);
+    Message getMessageById(Long id);
 
-    void deleteMessage(Long id);
+    void deleteMessageById(Long id);
 
     Page<Message> getAllMessages(Pageable pageable);
 

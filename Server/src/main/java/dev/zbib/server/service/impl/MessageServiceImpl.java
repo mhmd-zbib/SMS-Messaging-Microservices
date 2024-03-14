@@ -27,13 +27,13 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message getMessage(Long id) {
+    public Message getMessageById(Long id) {
         return messagesRepository.findById(id).orElse(null);
     }
 
     @Override
-    public void deleteMessage(Long id) {
-        Message message = getMessage(id);
+    public void deleteMessageById(Long id) {
+        Message message = getMessageById(id);
         messagesRepository.delete(message);
     }
 
@@ -44,7 +44,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message updateMessage(Long id, MessageRequest messageRequest) {
-        Message message = getMessage(id);
+        Message message = getMessageById(id);
         message.setMessage(messageRequest.getMessage());
         message.setPhoneNumber(messageRequest.getPhoneNumber());
         return messagesRepository.save(message);
