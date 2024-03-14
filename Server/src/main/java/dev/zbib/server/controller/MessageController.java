@@ -1,9 +1,9 @@
 package dev.zbib.server.controller;
 
 
-import dev.zbib.server.model.request.MessageRequest;
 import dev.zbib.server.model.entity.Message;
-import dev.zbib.server.service.IMessageService;
+import dev.zbib.server.model.request.MessageRequest;
+import dev.zbib.server.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class MessageController {
 
     @Autowired
-    private IMessageService messageService;
+    private MessageService messageService;
 
     @PostMapping
     public ResponseEntity<Message> sendMessage(@RequestBody MessageRequest messageRequest) {
