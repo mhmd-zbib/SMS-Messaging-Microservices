@@ -24,7 +24,11 @@ public class AlfaSmsProviderService implements ISmsProviderService {
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
         return webClient.get()
-                .uri(alfaUrl)
+                .uri(uriBuilder -> uriBuilder
+                        .path(alfaUrl)
+                        .queryParam("phoneNumber", smsProviderRequest.getPhoneNumber())
+                        .queryParam("message", smsProviderRequest.getMessage())
+                        .build())
                 .retrieve()
                 .bodyToMono(String.class);
     }
