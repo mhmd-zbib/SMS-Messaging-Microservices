@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MtcController {
 
     @PostMapping("/sms")
-    public ResponseEntity<String> sendSms (@RequestBody MessageReq messageReq) {
+    public ResponseEntity<String> sendSms(@RequestBody MessageReq messageReq) {
         System.out.println(messageReq.getPhoneNumber() +
                 " says: " + messageReq.getMessage() +
                 " talking in: " + messageReq.getLanguage());
 
-        return ResponseEntity.ok(messageReq.getPhoneNumber() +
-                " says: " + messageReq.getMessage() +
-                " talking in: " + messageReq.getLanguage());
+        return ResponseEntity.ok("MTC: " + messageReq.getPhoneNumber() + "  " + messageReq.getMessage() + "/ " + messageReq.getLanguage());
     }
 }

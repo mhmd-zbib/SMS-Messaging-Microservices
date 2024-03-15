@@ -30,6 +30,8 @@ public class AlfaSmsProviderService implements ISmsProviderService {
                         .queryParam("message", smsProviderRequest.getMessage())
                         .build())
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .doOnError(error -> System.err.println("ALFA [ERROR] " + error.getMessage()));
+
     }
 }
