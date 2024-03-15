@@ -9,6 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+/**
+ * <h2>Mtc provider actions handler</h2>
+ * <p>This service implements the ISmsProviderService taking all the methods that all the providers do,
+ * and here it uses them depending on its context. Using bean {@link WebClient} bean in config.</p>
+ */
+
 @Service
 public class MtcSmsProviderService implements ISmsProviderService {
 
@@ -23,6 +29,12 @@ public class MtcSmsProviderService implements ISmsProviderService {
     }
 
 
+    /**
+     * <h3>Mtc SMS message sender</h3>
+     * <p>This service handles sending sms to the mtc provider. It builds the Mtc SMS request as
+     * a json (check {@link MtcSmsJsonRequest} and calls webclient.post() adding the content and
+     * the value and handling the errors.</p>
+     */
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
         MtcSmsJsonRequest request = MtcSmsJsonRequest.builder()
