@@ -1,6 +1,6 @@
 package dev.zbib.server.service;
 
-import dev.zbib.server.model.request.MtcSmsRequest;
+import dev.zbib.server.model.request.MtcSmsJsonRequest;
 import dev.zbib.server.model.request.SmsProviderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,7 @@ public class MtcSmsProviderService implements ISmsProviderService {
 
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
-        MtcSmsRequest request = MtcSmsRequest.builder()
+        MtcSmsJsonRequest request = MtcSmsJsonRequest.builder()
                 .message(smsProviderRequest.getMessage())
                 .phoneNumber(smsProviderRequest.getPhoneNumber())
                 .language(smsProviderRequest.getLanguage())
