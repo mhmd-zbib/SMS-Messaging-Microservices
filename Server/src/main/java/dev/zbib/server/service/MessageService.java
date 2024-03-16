@@ -27,9 +27,7 @@ public class MessageService {
                 .message(messageRequest.getMessage())
                 .phoneNumber(messageRequest.getPhoneNumber())
                 .build();
-
         return messagesRepository.save(message);
-
     }
 
     public Message getMessageById(Long id) {
@@ -52,6 +50,5 @@ public class MessageService {
         message.setMessage(messageRequest.getMessage());
         message.setPhoneNumber(messageRequest.getPhoneNumber());
         return messagesRepository.save(message);
-
     }
 }
