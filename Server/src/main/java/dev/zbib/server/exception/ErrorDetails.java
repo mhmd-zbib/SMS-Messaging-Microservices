@@ -1,17 +1,15 @@
 package dev.zbib.server.exception;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
 
 @Getter
 @Setter
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ErrorDetails {
-    private Date timestamp;
-    private String code;
     private String message;
-    private String details;
+//    private String code;
 }
