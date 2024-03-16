@@ -1,4 +1,4 @@
-package dev.zbib.smsProvider.controller;
+package dev.zbib.provider2.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
