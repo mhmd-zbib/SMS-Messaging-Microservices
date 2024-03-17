@@ -11,5 +11,4 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ErrorDetails {
     private String message;
-//    private String code;
 }

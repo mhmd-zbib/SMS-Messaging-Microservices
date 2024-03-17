@@ -1,5 +1,6 @@
 package dev.zbib.server.exception;
 
+import dev.zbib.server.exception.Exceptions.BadRequestException;
 import dev.zbib.server.exception.Exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +27,13 @@ public class GlobalExceptionHandler {
         System.out.println("[SERVER ERROR] " + ex.getMessage());
         ErrorDetails errorDetails = new ErrorDetails("Something went wrong");
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ResponseEntity<ErrorDetails> handleBadRequestException(Exception ex) {
+        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 }
