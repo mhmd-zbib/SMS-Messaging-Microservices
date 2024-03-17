@@ -2,6 +2,8 @@ package dev.zbib.server.service;
 
 import dev.zbib.server.model.request.MessageRequest;
 import dev.zbib.server.utils.CodeGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScheduleMessageService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleMessageService.class);
     private final MessageService messageService;
 
     public ScheduleMessageService(MessageService messageService) {
@@ -29,7 +32,7 @@ public class ScheduleMessageService {
         MessageRequest messageRequest = MessageRequest.builder()
                 .message(code)
                 .build();
-        String messageCode  = messageService.sendMessage(messageRequest).getMessage();
-        System.out.println("Your current code is " + messageCode);
+        String messageCode = messageService.sendMessage(messageRequest).getMessage();
+        LOGGER.info("Your new code is: {}", messageCode);
     }
 }

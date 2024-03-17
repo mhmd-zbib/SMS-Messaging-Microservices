@@ -28,7 +28,7 @@ public class SmsProviderFactory {
 
     public ISmsProviderService getSmsProvider() {
         int choice = random.nextInt(3);
-        switch (choice) {   
+        switch (choice) {
             case 0:
                 return mtcSmsProvider;
             case 1:
