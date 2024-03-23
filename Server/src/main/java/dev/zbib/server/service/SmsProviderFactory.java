@@ -1,5 +1,6 @@
 package dev.zbib.server.service;
 
+import dev.zbib.server.exception.Exceptions.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,14 @@ public class SmsProviderFactory {
     }
 
     public ISmsProviderService getSmsProvider() {
-        int choice = random.nextInt(2);
+        int choice = random.nextInt(3);
         switch (choice) {
             case 0:
                 return mtcSmsProvider;
             case 1:
                 return alfaSmsProvider;
+            case 2 :
+                throw new BadRequestException("We decided to give you an error");
             default:
                     return null;
         }
