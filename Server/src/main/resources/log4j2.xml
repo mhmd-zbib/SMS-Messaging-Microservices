@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
+<Configuration status="INFO">
+    <Properties>
+        <!-- Enable debug logging for Log4j2 itself -->
+        <Property name="log4j2.debug" value="true"/>
+        <!-- Define a layout pattern for logs -->
+        <Property name="layout">%d{ISO8601} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="logFileName" value="app.log"/>
+        <Property name="logDir" value="logs"/> <!-- Directory for log files -->
+    </Properties>
+
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %t %level %c %msg %n" />
+        <!-- Console Appender for standard output -->
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${layout}"/>
         </Console>
+
+        <!-- File Appender for logging to a file -->
+        <File name="LogFile" fileName="${logDir}/${logFileName}">
+            <PatternLayout>
+                <Pattern>%d{ISO8601} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/> <!-- Daily rollover -->
+            </Policies>
+            <DefaultRolloverStrategy max="5"> <!-- Keep last 5 log files -->
+                <Delete basePath="${logDir}" maxDepth="1">
+                    <IfLastModified age="7d"/> <!-- Delete logs older than 7 days -->
+                </Delete>
+            </DefaultRolloverStrategy>
+        </File>
+
+        <!-- RollingFile Appender for rotating logs -->
+        <RollingFile name="ROLLING_LOG" fileName="${logDir}/${logFileName}" filePattern="${logDir}/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d{ISO8601} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/> <!-- Daily rollover -->
+                <SizeBasedTriggeringPolicy size="10MB"/> <!-- Roll over after 10MB -->
+            </Policies>
+            <DefaultRolloverStrategy max="30"/> <!-- Keep up to 30 rolled over files -->
+        </RollingFile>
     </Appenders>
 
     <Loggers>
-        <Root level="info">
-            <AppenderRef ref="Console" />
+        <!-- Logger for specific package or class -->
+        <Logger name="stuff" level="INFO" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="ROLLING_LOG"/>
+        </Logger>
+
+        <!-- Add more loggers as needed -->
+        <Logger name="com.example" level="DEBUG" additivity="false">
+            <AppenderRef ref="ROLLING_LOG"/>
+        </Logger>
+
+        <!-- Root logger configuration -->
+        <Root level="ERROR">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="LogFile"/>
         </Root>
     </Loggers>
 </Configuration>
