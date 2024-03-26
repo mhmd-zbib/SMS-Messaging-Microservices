@@ -1,0 +1,16 @@
+package dev.zbib.server.service;
+
+import dev.zbib.server.model.request.SmsProviderRequest;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+@Service
+public class CronQueueSmsProviderService extends ABaseQueueSmsProviderService{
+
+    @Autowired
+    protected CronQueueSmsProviderService(RabbitTemplate rabbitTemplate) {
+        super(rabbitTemplate, "sms-cron");
+    }
+}
