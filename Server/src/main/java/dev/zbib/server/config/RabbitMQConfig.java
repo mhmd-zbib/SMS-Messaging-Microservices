@@ -9,8 +9,12 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Bean
-    public Queue smsQueue() {
-        return new Queue("sms-queue", false);
+    public Queue smsListenerQueue() {
+        return new Queue("sms-listener", true);
     }
 
+    @Bean
+    public Queue smsCronQueue() {
+        return new Queue("sms-cron", true);
+    }
 }
