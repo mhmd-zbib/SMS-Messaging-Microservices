@@ -2,16 +2,18 @@ package dev.zbib.server.service;
 
 import dev.zbib.server.model.request.SmsProviderRequest;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 
 
 public abstract class AQueueSmsProviderService implements ISmsProviderService {
-
-    protected final RabbitTemplate rabbitTemplate;
     private final String queueName;
 
-    protected AQueueSmsProviderService(RabbitTemplate rabbitTemplate, String queueName) {
-        this.rabbitTemplate = rabbitTemplate;
+    @Autowired
+    protected RabbitTemplate rabbitTemplate;
+
+
+    protected AQueueSmsProviderService(String queueName) {
         this.queueName = queueName;
     }
 

@@ -1,14 +1,10 @@
 package dev.zbib.server.service;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ListenerQueueSmsProviderService extends AQueueSmsProviderService {
-
-    @Autowired
-    protected ListenerQueueSmsProviderService(RabbitTemplate rabbitTemplate) {
-        super(rabbitTemplate, "sms-listener");
+    protected ListenerQueueSmsProviderService() {
+        super("sms-listener");
     }
 }
