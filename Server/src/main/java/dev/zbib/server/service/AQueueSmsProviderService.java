@@ -5,12 +5,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import reactor.core.publisher.Mono;
 
 
-public abstract class ABaseQueueSmsProviderService implements ISmsProviderService {
+public abstract class AQueueSmsProviderService implements ISmsProviderService {
 
     protected final RabbitTemplate rabbitTemplate;
     private final String queueName;
 
-    protected ABaseQueueSmsProviderService(RabbitTemplate rabbitTemplate, String queueName) {
+    protected AQueueSmsProviderService(RabbitTemplate rabbitTemplate, String queueName) {
         this.rabbitTemplate = rabbitTemplate;
         this.queueName = queueName;
     }

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CronQueueSmsProviderService extends ABaseQueueSmsProviderService{
+public class CronQueueSmsProviderService extends AQueueSmsProviderService {
 
     @Autowired
     protected CronQueueSmsProviderService(RabbitTemplate rabbitTemplate) {
