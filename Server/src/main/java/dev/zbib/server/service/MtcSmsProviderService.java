@@ -20,8 +20,6 @@ public class MtcSmsProviderService implements ISmsProviderService {
 
 
     private final WebClient webClient;
-    @Value("${provider.routes.mtc}")
-    private String mtcUrl;
 
     @Autowired
     public MtcSmsProviderService(WebClient webClient) {
@@ -44,7 +42,7 @@ public class MtcSmsProviderService implements ISmsProviderService {
                 .build();
 
         return webClient.post()
-                .uri(mtcUrl)
+                .uri("/mtc")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()

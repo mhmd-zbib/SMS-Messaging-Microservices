@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/alfa")
 public class AlfaController {
 
-    @GetMapping("/sms")
+    @GetMapping()
     public ResponseEntity<String> sendSms(@RequestParam String phoneNumber, @RequestParam String message) {
         System.out.println(phoneNumber + ": " + message);
         return ResponseEntity.ok(  "ALFA: " + phoneNumber + "   " + message);
