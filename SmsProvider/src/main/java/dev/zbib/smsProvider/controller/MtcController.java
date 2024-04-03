@@ -1,6 +1,6 @@
 package dev.zbib.smsProvider.controller;
 
-import dev.zbib.smsProvider.model.request.MessageReq;
+import dev.zbib.smsProvider.model.request.SmsProviderRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MtcController {
 
     @PostMapping()
-    public ResponseEntity<String> sendSms(@RequestBody MessageReq messageReq) {
+    public ResponseEntity<String> sendSms(@RequestBody SmsProviderRequest messageReq) {
         System.out.println(messageReq.getPhoneNumber() +
                 " says: " + messageReq.getMessage() +
                 " talking in: " + messageReq.getLanguage());

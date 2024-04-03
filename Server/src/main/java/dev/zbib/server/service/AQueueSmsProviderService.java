@@ -1,5 +1,6 @@
 package dev.zbib.server.service;
 
+import dev.zbib.server.config.RabbitMQConfig;
 import dev.zbib.server.model.request.SmsProviderRequest;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,14 @@ public abstract class AQueueSmsProviderService implements ISmsProviderService {
 
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
-        rabbitTemplate.convertAndSend(queueName, smsProviderRequest.getMessage());
+
+        SmsProviderRequest jsonRequest = smsProviderRequest.builder()
+                .message(smsProviderRequest.getMessage())
+                .phoneNumber(smsProviderRequest.getPhoneNumber())
+                .build();
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME,
+                RabbitMQConfig.ROUTING_KEY, jsonRequest);
+
         return Mono.just("Message sent");
     }
 }
