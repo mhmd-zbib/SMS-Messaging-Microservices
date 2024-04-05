@@ -1,11 +1,16 @@
 package dev.zbib.smsProvider.model.request;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
+@Setter
 @Builder
-public class SmsProviderRequest {
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class SmsProviderRequest implements Serializable {
     private String message;
     private String phoneNumber;
     private String language;
