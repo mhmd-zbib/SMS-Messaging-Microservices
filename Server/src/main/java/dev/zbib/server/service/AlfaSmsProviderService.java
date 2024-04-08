@@ -18,8 +18,7 @@ public class AlfaSmsProviderService implements ISmsProviderService {
     private final WebClient webClient;
 
 
-    @Value("${provider.routes.alfa}")
-    private String alfaUrl;
+
 
     @Autowired
     public AlfaSmsProviderService(WebClient webClient) {
@@ -36,7 +35,7 @@ public class AlfaSmsProviderService implements ISmsProviderService {
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(alfaUrl)
+                        .path("alfa")
                         .queryParam("phoneNumber", smsProviderRequest.getPhoneNumber())
                         .queryParam("message", smsProviderRequest.getMessage())
                         .build())

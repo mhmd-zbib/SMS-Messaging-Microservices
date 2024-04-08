@@ -24,9 +24,9 @@ public class ScheduleMessageService {
 
     /**
      * <h3>Internal server scheduled messages</h3>
-     * <p>This service creates a code every 30 secs and saves it on the database with logging the value</p>
+     * <p>This service creates a code every 3 min and saves it on the database with logging the value</p>
      */
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 300000)
     private void sendScheduleMessage() {
         String code = CodeGenerator.generate6DigitCode();
         MessageRequest messageRequest = MessageRequest.builder()
