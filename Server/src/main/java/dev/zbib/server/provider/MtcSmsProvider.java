@@ -1,22 +1,20 @@
-package dev.zbib.server.service.impl;
+package dev.zbib.server.provider;
 
-import dev.zbib.server.dto.MtcSmsRequest;
 import dev.zbib.server.dto.SmsProviderRequest;
-import dev.zbib.server.service.SmsProviderService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-public class MtcSmsServiceImpl implements SmsProviderService {
+public class MtcSmsProvider implements SmsProvider {
 
     private final WebClient webClient;
 
     @Value("${provider.mtc.url}")
     private String MtcSmsUrl;
 
-    public MtcSmsServiceImpl(WebClient.Builder webClientBuilder) {
+    public MtcSmsProvider(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(MtcSmsUrl).build();
     }
 
