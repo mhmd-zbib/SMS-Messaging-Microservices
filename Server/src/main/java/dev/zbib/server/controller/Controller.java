@@ -31,8 +31,8 @@ public class Controller {
                                     @RequestParam(value = "provider", required = false) String provider) {
 
         if (provider == null || provider.equals("1")) {
-            String messagePath = messageRequest.message();
-            String phonePath = messageRequest.phoneNumber();
+            String messagePath = messageRequest.getMessage();
+            String phonePath = messageRequest.getPhoneNumber();
 
             return webClientBuilder.build().get()
                     .uri(provider2Url, phonePath, messagePath)
