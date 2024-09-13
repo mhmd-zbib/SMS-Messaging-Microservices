@@ -1,13 +1,14 @@
 package dev.zbib.server.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TouchSmsRequest {
+public class MtcSmsRequest {
     String phoneNumber;
     String message;
     String language;
