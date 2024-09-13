@@ -1,5 +1,6 @@
-package dev.zbib.server;
+package dev.zbib.server.controller;
 
+import dev.zbib.server.dto.MessageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class Controller {
      *
      *  provider1 is a get req that takes path var of message and phone number only
      *  provider2 is a post req that takes a req body of message, phone, and language
-     *
+     *chat
      */
     @PostMapping
     public Mono<String> sendMessage(@RequestBody MessageRequest messageRequest,
