@@ -14,5 +14,5 @@ server:
 provider:
   url: http://localhost:8010
   routes:
-    mtc: /mtc
-    alfa: /alfa
+    mtc: /mtc/sms
+    alfa: /alfa/sms

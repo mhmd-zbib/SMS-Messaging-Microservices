@@ -14,22 +14,18 @@ public class MtcSmsProviderService implements ISmsProviderService {
 
 
     private final WebClient webClient;
-
-    @Value("${provider.url}")
-    private String providerUrl;
-
     @Value("${provider.routes.mtc}")
     private String mtcUrl;
 
     @Autowired
-    public MtcSmsProviderService(WebClient.Builder webClient) {
-        this.webClient = webClient.baseUrl(this.providerUrl).build();
+    public MtcSmsProviderService(WebClient webClient) {
+        this.webClient = webClient;
     }
 
 
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
-
+        System.out.println("Mtc sending");
         MtcSmsRequest request = MtcSmsRequest.builder()
                 .message(smsProviderRequest.getMessage())
                 .phoneNumber(smsProviderRequest.getPhoneNumber())
@@ -37,7 +33,7 @@ public class MtcSmsProviderService implements ISmsProviderService {
                 .build();
 
         return webClient.post()
-                .uri("/mtc/sms")
+                .uri(mtcUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
