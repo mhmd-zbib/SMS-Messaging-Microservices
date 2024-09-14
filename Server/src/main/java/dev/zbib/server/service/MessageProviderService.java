@@ -4,6 +4,7 @@ import dev.zbib.server.dto.SmsProviderRequest;
 import dev.zbib.server.provider.SmsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 public class MessageProviderService {
@@ -15,8 +16,8 @@ public class MessageProviderService {
         this.providerSelector = providerSelector;
     }
 
-    public void sendMessage(SmsProviderRequest smsProviderRequest) {
+    public Mono<String> sendMessage(SmsProviderRequest smsProviderRequest) {
         SmsProvider provider = providerSelector.getSmsProvider();
-        provider.sendSms(smsProviderRequest);
+        return provider.sendSms(smsProviderRequest);
     }
 }
