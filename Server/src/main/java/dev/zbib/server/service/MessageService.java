@@ -4,6 +4,8 @@ import dev.zbib.server.model.entity.Message;
 import dev.zbib.server.model.request.MessageRequest;
 import dev.zbib.server.repository.MessagesRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageService {
 
-    private MessagesRepository messagesRepository;
+    private final MessagesRepository messagesRepository;
+
+    public MessageService(MessagesRepository messagesRepository) {
+        this.messagesRepository = messagesRepository;
+    }
 
     @Transactional
     public Message sendMessage(MessageRequest messageRequest) {
