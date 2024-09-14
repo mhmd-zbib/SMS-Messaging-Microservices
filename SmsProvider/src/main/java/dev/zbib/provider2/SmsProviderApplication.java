@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MtcProviderApplication {
+public class SmsProviderApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MtcProviderApplication.class, args);
+        SpringApplication.run(SmsProviderApplication.class, args);
         System.out.println("Welcome to Mtc");
 
     }

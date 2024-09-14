@@ -1,20 +1,19 @@
 package dev.zbib.server.service;
 
-import dev.zbib.server.model.request.MessageRequest;
 import dev.zbib.server.model.entity.Message;
+import dev.zbib.server.model.request.MessageRequest;
 import dev.zbib.server.repository.MessagesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MessageService implements IMessageService {
+public class MessageService {
 
-    @Autowired
     private MessagesRepository messagesRepository;
 
-    @Override
+    @Transactional
     public Message sendMessage(MessageRequest messageRequest) {
         Message message = Message.builder()
                 .message(messageRequest.getMessage())
@@ -25,23 +24,21 @@ public class MessageService implements IMessageService {
 
     }
 
-    @Override
     public Message getMessageById(Long id) {
         return messagesRepository.findById(id).orElse(null);
     }
 
-    @Override
+    @Transactional
     public void deleteMessageById(Long id) {
         Message message = getMessageById(id);
         messagesRepository.delete(message);
     }
 
-    @Override
     public Page<Message> getAllMessages(Pageable pageable) {
         return messagesRepository.findAll(pageable);
     }
 
-    @Override
+    @Transactional
     public Message updateMessage(Long id, MessageRequest messageRequest) {
         Message message = getMessageById(id);
         message.setMessage(messageRequest.getMessage());

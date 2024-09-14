@@ -10,6 +10,7 @@ public class ProviderSelectorService {
 
     private final MtcSmsService mtcSmsProvider;
     private final AlfaSmsService alfaSmsProvider;
+
     private final Random random = new Random();
 
     @Autowired
