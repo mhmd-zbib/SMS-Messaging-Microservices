@@ -1,7 +1,7 @@
 package dev.zbib.server.controller;
 
 import dev.zbib.server.model.request.SmsProviderRequest;
-import dev.zbib.server.service.MessageProviderService;
+import dev.zbib.server.service.SmsSendingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,17 +14,17 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/provider")
 public class SmsProviderController {
 
-    private final MessageProviderService messageProviderService;
+    private final SmsSendingService messageProviderService;
 
     @Autowired
-    public SmsProviderController(MessageProviderService messageProviderService) {
+    public SmsProviderController(SmsSendingService messageProviderService) {
         this.messageProviderService = messageProviderService;
 
     }
 
     @PostMapping
     public ResponseEntity<Mono<String>> sendMessage(@RequestBody SmsProviderRequest smsProviderRequest) {
-        return ResponseEntity.ok(messageProviderService.sendMessage(smsProviderRequest));
+        return ResponseEntity.ok(messageProviderService.sendSms(smsProviderRequest));
     }
 
 

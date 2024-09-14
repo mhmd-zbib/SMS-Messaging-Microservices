@@ -9,15 +9,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-public class MtcSmsService implements ISmsProviderService {
+public class MtcSmsProviderService implements ISmsProviderService {
 
 
     private final WebClient.Builder webClient;
-    @Value("${provider.mtc.url}")
-    private String mtcSmsUrl;
 
-    public MtcSmsService(WebClient.Builder webClient) {
-        this.webClient = webClient;
+    @Value("${provider.url}")
+    private String providerUrl;
+
+    @Value("${provider.routes.mtc}")
+    private String  mtcUrl;
+
+    public MtcSmsProviderService(WebClient.Builder webClient) {
+        this.webClient = webClient.baseUrl(providerUrl);
     }
 
     @Override
@@ -30,7 +34,7 @@ public class MtcSmsService implements ISmsProviderService {
                 .build();
 
         return webClient.build().post()
-                .uri("http://localhost:8020")
+                .uri(mtcUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()

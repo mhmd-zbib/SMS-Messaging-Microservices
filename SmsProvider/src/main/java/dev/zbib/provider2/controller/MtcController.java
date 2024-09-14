@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/mtc")
 public class MtcController {
 
-    @PostMapping
+    @PostMapping("/sms")
     public ResponseEntity<String> sendCode(@RequestBody MessageReq messageReq) {
         System.out.println(messageReq.getPhoneNumber() +
                 " says: " + messageReq.getMessage() +

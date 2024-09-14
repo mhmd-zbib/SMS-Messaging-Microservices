@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
-public class ProviderSelectorService {
+public class SmsProviderSelectorService {
 
-    private final MtcSmsService mtcSmsProvider;
-    private final AlfaSmsService alfaSmsProvider;
+    private final MtcSmsProviderService mtcSmsProvider;
+    private final AlfaSmsProviderService alfaSmsProvider;
 
     private final Random random = new Random();
 
     @Autowired
-    public ProviderSelectorService(MtcSmsService mtcSmsProvider, AlfaSmsService alfaSmsProvider) {
+    public SmsProviderSelectorService(MtcSmsProviderService mtcSmsProvider, AlfaSmsProviderService alfaSmsProvider) {
         this.mtcSmsProvider = mtcSmsProvider;
         this.alfaSmsProvider = alfaSmsProvider;
     }

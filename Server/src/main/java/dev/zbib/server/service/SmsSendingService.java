@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-public class MessageProviderService {
+public class SmsSendingService {
 
-    private final ProviderSelectorService providerSelector;
+    private final SmsProviderSelectorService providerSelector;
 
     @Autowired
-    public MessageProviderService(ProviderSelectorService providerSelector) {
+    public SmsSendingService(SmsProviderSelectorService providerSelector) {
         this.providerSelector = providerSelector;
     }
 
-    public Mono<String> sendMessage(SmsProviderRequest smsProviderRequest) {
+    public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
         ISmsProviderService provider = providerSelector.getSmsProvider();
         return provider.sendSms(smsProviderRequest);
     }
