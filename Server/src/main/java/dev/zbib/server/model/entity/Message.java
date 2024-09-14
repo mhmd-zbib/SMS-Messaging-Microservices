@@ -1,4 +1,4 @@
-package dev.zbib.server.model;
+package dev.zbib.server.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
