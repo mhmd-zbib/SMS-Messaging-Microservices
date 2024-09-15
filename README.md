@@ -22,11 +22,11 @@ This project simulates a real world simple messaging system where a central serv
 ### Getting Started
 
 1.  ```bash
-    git clone https://github.com/your-username/springboot-messaging-microservices.git
+    https://github.com/mhmd-zbib/SMS-Messaging-Microservices.git
     ```
 
 2.  ```
-    cd springboot-messaging-microservices
+    cd SMS-messaging-Microservices
     ./mvnw clean install
     ```
 
