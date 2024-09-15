@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: Server
+  datasource:
+    url: <db-url>
+    username: <username>
+    password: <password>
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8000
+
+provider:
+  url: <provider-url>
+  routes:
+    mtc: /mtc/sms
+    alfa: /alfa/sms
