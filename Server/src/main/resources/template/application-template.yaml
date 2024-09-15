@@ -15,5 +15,5 @@ server:
 provider:
   url: <provider-url>
   routes:
-    mtc: /mtc/sms
+    mtc: /mtc/sms   
     alfa: /alfa/sms

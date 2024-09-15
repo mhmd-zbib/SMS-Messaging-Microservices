@@ -43,4 +43,4 @@ bin/
 .gradle/
 
 # Ignore application.yml
-/Server/src/main/resources/application.yaml
+server/src/main/resources/application.yaml
