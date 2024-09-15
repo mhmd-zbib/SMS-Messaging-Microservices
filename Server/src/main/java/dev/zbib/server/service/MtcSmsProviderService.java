@@ -25,7 +25,6 @@ public class MtcSmsProviderService implements ISmsProviderService {
 
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
-        System.out.println("Mtc sending");
         MtcSmsRequest request = MtcSmsRequest.builder()
                 .message(smsProviderRequest.getMessage())
                 .phoneNumber(smsProviderRequest.getPhoneNumber())
@@ -37,6 +36,7 @@ public class MtcSmsProviderService implements ISmsProviderService {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .doOnError(error -> System.err.println("MTC [ERROR] " + error.getMessage()));
     }
 }
