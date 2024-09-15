@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 @Builder
-public class MtcSmsRequest {
+public class MtcSmsJsonRequest {
 
     @JsonProperty("phoneNumber")
     private String phoneNumber;

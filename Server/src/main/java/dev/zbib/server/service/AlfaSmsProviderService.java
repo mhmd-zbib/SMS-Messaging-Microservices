@@ -32,6 +32,5 @@ public class AlfaSmsProviderService implements ISmsProviderService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .doOnError(error -> System.err.println("ALFA [ERROR] " + error.getMessage()));
-
     }
 }
