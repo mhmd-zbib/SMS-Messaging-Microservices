@@ -5,6 +5,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+/**
+ *  <h2>Factory clas for selecting an SMS provider</h2>
+ *  <p>This class select between two available SMS providers (Mtc and Alfa) and returns the chosen provider
+ *  It implements a simple random number (0 / 1) and uses switch case for selecting the sms</p>
+ */
+
 @Service
 public class SmsProviderFactory {
 

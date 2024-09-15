@@ -4,12 +4,14 @@ import dev.zbib.server.model.entity.Message;
 import dev.zbib.server.model.request.MessageRequest;
 import dev.zbib.server.repository.MessagesRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/**
+ * <H2>Message CRUD operations</H2>
+ * <p>This service handles the basic {@link Message} CRUD operations (more to come)</p>
+ */
 @Service
 public class MessageService {
 
