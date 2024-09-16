@@ -1,4 +1,4 @@
-package dev.zbib.smsProvider.model.request;
+package dev.zbib.provider2.model.request;
 
 import lombok.Getter;
 
