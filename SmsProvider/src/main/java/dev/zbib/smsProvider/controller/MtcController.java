@@ -1,6 +1,6 @@
-package dev.zbib.provider2.controller;
+package dev.zbib.smsProvider.controller;
 
-import dev.zbib.provider2.model.request.MessageReq;
+import dev.zbib.smsProvider.model.request.MessageReq;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
