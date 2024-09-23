@@ -1,5 +1,6 @@
 package dev.zbib.server.service;
 
+import dev.zbib.server.exception.Exceptions.ResourceNotFoundException;
 import dev.zbib.server.model.entity.Message;
 import dev.zbib.server.model.request.MessageRequest;
 import dev.zbib.server.repository.MessagesRepository;
@@ -33,7 +34,7 @@ public class MessageService {
     }
 
     public Message getMessageById(Long id) {
-        return messagesRepository.findById(id).orElse(null);
+        return messagesRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Message not found!"));
     }
 
     @Transactional
