@@ -44,3 +44,4 @@ bin/
 
 # Ignore application.yml
 server/src/main/resources/application.yaml
+smsprovider/src/main/resources/application.yaml

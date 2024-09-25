@@ -2,7 +2,7 @@ spring:
   application:
     name: MtcProvider
   rabbitmq:
-    host: localhost
+    host: armadillo-01.rmq.cloudamqp.com
     port: 5672
     username: sms-messaging
     password: 123
