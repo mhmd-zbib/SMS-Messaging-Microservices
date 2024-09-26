@@ -42,6 +42,9 @@ bin/
 .mvn/
 .gradle/
 
+*~
+
+
 # Ignore application.yml
 Server/src/main/resources/application.yaml
 SmsProvider/src/main/resources/application.yaml
