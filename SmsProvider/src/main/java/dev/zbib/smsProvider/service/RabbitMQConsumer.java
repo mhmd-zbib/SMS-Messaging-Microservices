@@ -19,7 +19,7 @@ public class RabbitMQConsumer {
 
     @RabbitListener(queues = "sms-listener")
     public void listenerConsumer(String message) {
-        System.out.println("Received message:  " + message);
+        System.out.println("Listener got:  " + message);
     }
 
     @Scheduled(fixedRate = 10000)
@@ -28,7 +28,7 @@ public class RabbitMQConsumer {
             var message = rabbitTemplate.receive("sms-cron");
             if (message != null) {
                 String messageBody = new String(message.getBody());
-                System.out.println("Consumed message: " + messageBody);
+                System.out.println("Cron got: " + messageBody);
             } else {
                 break;
             }

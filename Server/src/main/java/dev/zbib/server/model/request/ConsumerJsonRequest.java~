@@ -1,0 +1,13 @@
+package dev.zbib.server.model.request;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+
+@Builder
+public class ConsumerJsonRequest {
+
+    private String phoneNumber;
+
+    private String message;
+
+}
