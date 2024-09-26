@@ -1,13 +1,19 @@
 package dev.zbib.smsProvider.config;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
 
-    public Queue smsQueue() {
-        return new Queue("sms-queue", false);
+    @Bean
+    public Queue smsListenerQueue() {
+        return new Queue("sms-listener", true);
     }
 
+    @Bean
+    public Queue smsCronQueue() {
+        return new Queue("sms-cron", false);
+    }
 }

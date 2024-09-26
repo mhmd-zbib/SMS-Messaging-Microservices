@@ -2,10 +2,14 @@ spring:
   application:
     name: MtcProvider
   rabbitmq:
-    host: armadillo-01.rmq.cloudamqp.com
+    host: localhost
     port: 5672
     username: sms-messaging
     password: 123
 
 server:
   port: 8010
+
+queue:
+  listener: sms-listener
+  cron: sms-cron
