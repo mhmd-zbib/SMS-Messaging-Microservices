@@ -1,7 +1,7 @@
 package dev.zbib.server.controller;
 
 import dev.zbib.server.model.request.SmsProviderRequest;
-import dev.zbib.server.service.CronQueueSmsProviderService;
+import dev.zbib.server.service.ScheduledQueueSmsProviderService;
 import dev.zbib.server.service.ListenerQueueSmsProviderService;
 import dev.zbib.server.service.SmsProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,10 @@ public class SmsProviderController {
 
     private final SmsProviderService messageProviderService;
     private final ListenerQueueSmsProviderService listenerQueueSmsProviderService;
-    private final CronQueueSmsProviderService cronQueueSmsProviderService;
+    private final ScheduledQueueSmsProviderService cronQueueSmsProviderService;
 
     @Autowired
-    public SmsProviderController(SmsProviderService messageProviderService, ListenerQueueSmsProviderService listenerQueueSmsProviderService, CronQueueSmsProviderService cronQueueSmsProviderService) {
+    public SmsProviderController(SmsProviderService messageProviderService, ListenerQueueSmsProviderService listenerQueueSmsProviderService, ScheduledQueueSmsProviderService cronQueueSmsProviderService) {
         this.messageProviderService = messageProviderService;
         this.listenerQueueSmsProviderService = listenerQueueSmsProviderService;
         this.cronQueueSmsProviderService = cronQueueSmsProviderService;
