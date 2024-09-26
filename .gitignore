@@ -45,3 +45,4 @@ bin/
 # Ignore application.yml
 Server/src/main/resources/application.yaml
 SmsProvider/src/main/resources/application.yaml
+application.yaml
