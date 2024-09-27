@@ -1,5 +1,6 @@
 package dev.zbib.server.config;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -23,11 +24,15 @@ public class RabbitMQConfig {
     @Value("${spring.rabbitmq.password}")
     private String password;
 
-    @Value("${listener.queue}")
-    private String listenerQueue;
+    @Bean
+    public Queue smsListenerQueue() {
+        return new Queue("sms-listener", true);
+    }
 
-    @Value("${cron.queue}")
-    private String cronQueue;
+    @Bean
+    public Queue smsCronQueue() {
+        return new Queue("sms-cron", true);
+    }
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -44,6 +49,5 @@ public class RabbitMQConfig {
         System.out.println("i was called here");
         return new RabbitTemplate(connectionFactory);
     }
-
 
 }
