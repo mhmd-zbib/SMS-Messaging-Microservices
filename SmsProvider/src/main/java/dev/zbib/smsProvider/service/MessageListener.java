@@ -11,28 +11,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessageListener {
 
-//    private final RabbitTemplate rabbitTemplate;
-//
-//    @Autowired
-//    public MessageListener(RabbitTemplate rabbitTemplate) {
-//        this.rabbitTemplate = rabbitTemplate;
-//    }
+    private final RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    public MessageListener(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     @RabbitListener(queues = "sms-listener")
     public void listenerConsumer(SmsProviderRequest messageReq) {
         System.out.println("Listener got:  " + messageReq.getMessage());
     }
 
-//    @Scheduled(fixedRate = 10000)
-//    public void cronConsumer() {
-//        while (true) {
-//            var message = rabbitTemplate.receive("sms-cron");
-//            if (message != null) {
-//                String messageBody = new String(message.getBody());
-//                System.out.println("Cron got: " + messageBody);
-//            } else {
-//                break;
-//            }
-//        }
-//    }
+    @Scheduled(fixedRate = 10000)
+    public void cronConsumer() {
+        while (true) {
+            var message = rabbitTemplate.receive("sms-cron");
+            if (message != null) {
+                String messageBody = new String(message.getBody());
+                System.out.println("Cron got: " + messageBody);
+            } else {
+                break;
+            }
+        }
+    }
 }
