@@ -1,8 +1,8 @@
 package dev.zbib.server.controller;
 
 import dev.zbib.server.model.request.SmsProviderRequest;
-import dev.zbib.server.service.ScheduledQueueSmsProviderService;
-import dev.zbib.server.service.ListenerQueueSmsProviderService;
+import dev.zbib.server.service.ListenerQueueSmsService;
+import dev.zbib.server.service.ScheduledQueueSmsService;
 import dev.zbib.server.service.SmsProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ import reactor.core.publisher.Mono;
 public class SmsProviderController {
 
     private final SmsProviderService messageProviderService;
-    private final ListenerQueueSmsProviderService listenerQueueSmsProviderService;
-    private final ScheduledQueueSmsProviderService cronQueueSmsProviderService;
+    private final ListenerQueueSmsService listenerQueueSmsService;
+    private final ScheduledQueueSmsService cronQueueSmsProviderService;
 
     @Autowired
-    public SmsProviderController(SmsProviderService messageProviderService, ListenerQueueSmsProviderService listenerQueueSmsProviderService, ScheduledQueueSmsProviderService cronQueueSmsProviderService) {
+    public SmsProviderController(SmsProviderService messageProviderService, ListenerQueueSmsService listenerQueueSmsService, ScheduledQueueSmsService cronQueueSmsProviderService) {
         this.messageProviderService = messageProviderService;
-        this.listenerQueueSmsProviderService = listenerQueueSmsProviderService;
+        this.listenerQueueSmsService = listenerQueueSmsService;
         this.cronQueueSmsProviderService = cronQueueSmsProviderService;
     }
 
@@ -34,7 +34,7 @@ public class SmsProviderController {
 
     @PostMapping("/queue/listener")
     public ResponseEntity<Mono<String>> sendMessageToListenerQueue(@RequestBody SmsProviderRequest smsProviderRequest) {
-        return ResponseEntity.ok(listenerQueueSmsProviderService.sendSms(smsProviderRequest));
+        return ResponseEntity.ok(listenerQueueSmsService.sendSms(smsProviderRequest));
     }
 
 

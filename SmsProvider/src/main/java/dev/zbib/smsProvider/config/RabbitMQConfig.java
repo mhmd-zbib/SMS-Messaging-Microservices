@@ -15,10 +15,20 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
+
 public class RabbitMQConfig {
 
-    public static final String EXCHANGE_NAME = "sms-exchange";
-    public static final String ROUTING_KEY = "sms-routing-key";
+    public static final String CRON_QUEUE = "sms_cron_queue";
+    public static final String LISTENER_QUEUE = "sms_listener_queue";
+
+    // Exchange Name
+    public static final String SMS_EXCHANGE = "sms_exchange";
+
+    // Routing Keys
+    public static final String ROUTING_KEY_SMS_CRON = "sms.cron";
+    public static final String ROUTING_KEY_SMS_LISTENER = "sms.listener";
+
+
     @Value("${spring.rabbitmq.host}")
     private String host;
     @Value("${spring.rabbitmq.port}")
@@ -28,16 +38,17 @@ public class RabbitMQConfig {
     @Value("${spring.rabbitmq.password}")
     private String password;
 
+
     @Bean
     public Queue smsListenerQueue() {
-        return new Queue("sms-listener", true);
+        return new Queue(LISTENER_QUEUE, true);
     }
 
 
-//    @Bean
-//    public Queue smsCronQueue() {
-//        return new Queue("sms-cron", true);
-//    }
+    @Bean
+    public Queue smsCronQueue() {
+        return new Queue(CRON_QUEUE, true);
+    }
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -57,16 +68,24 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(EXCHANGE_NAME);
+    public TopicExchange smsExchange() {
+        return new TopicExchange(SMS_EXCHANGE);
     }
 
     @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
+    public Binding bindingListenerQueue() {
         return BindingBuilder
-                .bind(queue)
-                .to(exchange)
-                .with(ROUTING_KEY);
+                .bind(smsListenerQueue())
+                .to(smsExchange())
+                .with(ROUTING_KEY_SMS_LISTENER);
+    }
+
+    @Bean
+    public Binding bindingCronQueue() {
+        return BindingBuilder
+                .bind(smsCronQueue())
+                .to(smsExchange())
+                .with(ROUTING_KEY_SMS_CRON);
     }
 
     @Bean

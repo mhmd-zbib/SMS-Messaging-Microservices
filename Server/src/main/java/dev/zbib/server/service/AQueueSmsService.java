@@ -14,32 +14,27 @@ import reactor.core.publisher.Mono;
  */
 
 
-public abstract class AQueueSmsProviderService implements ISmsProviderService {
-    private final String queueName;
+public abstract class AQueueSmsService implements ISmsProviderService {
 
     @Autowired
     protected RabbitTemplate rabbitTemplate;
 
-
-    protected AQueueSmsProviderService(String queueName) {
-        this.queueName = queueName;
-    }
+    protected abstract String getRoutingKey();
 
     /**
      * <h3>SMS message sender</h3>
      * <p>This service handles sending sms to the queue provider. It passes the request params to the
      * post api from the smsProviderRequest</p>
      */
-
     @Override
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
-
         SmsProviderRequest jsonRequest = smsProviderRequest.builder()
                 .message(smsProviderRequest.getMessage())
                 .phoneNumber(smsProviderRequest.getPhoneNumber())
                 .build();
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME,
-                RabbitMQConfig.ROUTING_KEY, jsonRequest);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.SMS_EXCHANGE,
+                getRoutingKey(), jsonRequest);
 
         return Mono.just("Message sent");
     }
