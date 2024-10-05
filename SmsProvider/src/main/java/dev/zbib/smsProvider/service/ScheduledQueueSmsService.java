@@ -36,7 +36,6 @@ public class ScheduledQueueSmsService {
         }
     }
 
-
     private SmsProviderRequest convertToSmsProviderRequest(String messageBody) {
         try {
             return jacksonObjectMapper.readValue(messageBody, SmsProviderRequest.class);
@@ -45,5 +44,4 @@ public class ScheduledQueueSmsService {
             return null;
         }
     }
-
 }
