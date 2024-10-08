@@ -1,9 +1,10 @@
 package dev.zbib.server.controller;
 
+import dev.zbib.server.event.RegistrationCompleteEvent;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.model.request.RegisterRequest;
-import dev.zbib.server.event.RegistrationCompleteEvent;
 import dev.zbib.server.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +25,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        User user = userService.registerUser(request);
-        eventPublisher.publishEvent(new RegistrationCompleteEvent(user, "url"));
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest, final HttpServletRequest httpRequest) {
+        User user = userService.registerUser(registerRequest);
+        eventPublisher.publishEvent(new RegistrationCompleteEvent(user, "http://"
+                + httpRequest.getServerName()
+                + ":" + httpRequest.getLocalPort()
+                + httpRequest.getContextPath()));
         return ResponseEntity.ok("Created");
     }
 

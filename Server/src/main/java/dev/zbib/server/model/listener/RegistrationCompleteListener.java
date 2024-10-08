@@ -3,14 +3,14 @@ package dev.zbib.server.model.listener;
 import dev.zbib.server.event.RegistrationCompleteEvent;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.service.UserService;
-import jakarta.persistence.Column;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class RegistrationCompleteListener implements
         ApplicationListener<RegistrationCompleteEvent> {
 
@@ -25,7 +25,10 @@ public class RegistrationCompleteListener implements
         User user = event.getUser();
         String token = UUID.randomUUID().toString();
         userService.saveVerificationToken(token, user);
+        String url = event.getApplicationUrl() + "verify?token=" + token;
 
-        //  Send to the user
+        //this should send the token to the email instead
+        log.info("Sending verification email to {}", url);
+
     }
 }
