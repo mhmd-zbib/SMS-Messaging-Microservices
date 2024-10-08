@@ -1,4 +1,4 @@
-package dev.zbib.server.model.listener;
+package dev.zbib.server.event.listener;
 
 import dev.zbib.server.event.RegistrationCompleteEvent;
 import dev.zbib.server.model.entity.User;
@@ -25,7 +25,7 @@ public class RegistrationCompleteListener implements
         User user = event.getUser();
         String token = UUID.randomUUID().toString();
         userService.saveVerificationToken(token, user);
-        String url = event.getApplicationUrl() + "verify?token=" + token;
+        String url = event.getApplicationUrl() + "/user/verifyToken?token=" + token;
 
         //this should send the token to the email instead
         log.info("Sending verification email to {}", url);

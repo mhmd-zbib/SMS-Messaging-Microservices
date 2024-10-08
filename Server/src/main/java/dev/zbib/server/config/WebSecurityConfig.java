@@ -11,8 +11,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
 
     private static final String[] WHITELIST_URLS = {
-            "auth/register",
-            "auth/login",
+            "user/register",
+            "user/login",
+            "user/verifyToken/**"
     };
 
     @Bean

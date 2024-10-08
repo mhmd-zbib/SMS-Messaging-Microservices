@@ -2,6 +2,7 @@ package dev.zbib.server.model.entity;
 
 import dev.zbib.server.model.enums.UserRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -30,6 +31,8 @@ public class User {
     private String email;
 
     private UserRole role;
+
+    private boolean enabled;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
