@@ -20,5 +20,6 @@ public class Message {
     private String phoneNumber;
 
     @ManyToOne
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 }
