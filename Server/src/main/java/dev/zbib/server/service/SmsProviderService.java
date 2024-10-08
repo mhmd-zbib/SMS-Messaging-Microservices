@@ -11,12 +11,12 @@ import reactor.core.publisher.Mono;
  */
 
 @Service
-public class SmsMessageProviderService {
+public class SmsProviderService {
 
     private final SmsProviderFactory providerSelector;
 
     @Autowired
-    public SmsMessageProviderService(SmsProviderFactory providerSelector) {
+    public SmsProviderService(SmsProviderFactory providerSelector) {
         this.providerSelector = providerSelector;
     }
 

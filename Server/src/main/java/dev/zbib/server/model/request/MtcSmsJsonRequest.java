@@ -3,8 +3,10 @@ package dev.zbib.server.model.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
+import java.io.Serializable;
+
 @Builder
-public class MtcSmsJsonRequest {
+public class MtcSmsJsonRequest  {
 
     @JsonProperty("phoneNumber")
     private String phoneNumber;
