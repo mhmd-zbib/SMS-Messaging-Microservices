@@ -3,22 +3,27 @@ package dev.zbib.server.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Message {
+public class User {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    private String message;
+    private String username;
 
-    private String phoneNumber;
+    private String password;
 
-    @ManyToOne
-    private User user;
+    private String email;
+
+    @OneToMany
+    private List<Message> messages;
 }
