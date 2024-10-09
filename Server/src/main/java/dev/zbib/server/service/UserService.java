@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -33,7 +34,6 @@ public class UserService {
                 .enabled(false)
                 .role(UserRole.USER)
                 .build();
-
         return userRepository.save(user);
     }
 
@@ -43,9 +43,7 @@ public class UserService {
     }
 
     public void validateVerificationToken(String token) {
-        VerificationToken verificationToken = verificationTokenRepository
-                .findByToken(token)
-                .orElseThrow(() -> new BadRequestException("Invalid verification token"));
+        VerificationToken verificationToken = getVerificationToken(token);
         User user = verificationToken.getUser();
         Calendar calendar = Calendar.getInstance();
 
@@ -56,5 +54,18 @@ public class UserService {
 
         user.setEnabled(true);
         userRepository.save(user);
+    }
+
+    public VerificationToken getVerificationToken(String token) {
+        return verificationTokenRepository
+                .findByToken(token)
+                .orElseThrow(() -> new BadRequestException("Invalid verification token"));
+    }
+
+    public VerificationToken generateNewVerificationToken(String oldToken) {
+        VerificationToken verificationToken = getVerificationToken(oldToken);
+        verificationToken.setToken(UUID.randomUUID().toString());
+        verificationTokenRepository.save(verificationToken);
+        return verificationToken;
     }
 }

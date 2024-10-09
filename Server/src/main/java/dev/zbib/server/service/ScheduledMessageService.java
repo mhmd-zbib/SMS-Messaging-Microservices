@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class ScheduleMessageService {
+public class ScheduledMessageService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleMessageService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledMessageService.class);
     private final MessageService messageService;
 
-    public ScheduleMessageService(MessageService messageService) {
+    public ScheduledMessageService(MessageService messageService) {
         this.messageService = messageService;
     }
 

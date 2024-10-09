@@ -6,6 +6,7 @@ import dev.zbib.server.model.entity.VerificationToken;
 import dev.zbib.server.model.request.RegisterRequest;
 import dev.zbib.server.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springdoc.webmvc.core.service.RequestService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,26 +17,45 @@ public class UserController {
 
     private final UserService userService;
     private final ApplicationEventPublisher eventPublisher;
+    private final RequestService requestBuilder;
 
-    public UserController(UserService userService, ApplicationEventPublisher eventPublisher) {
+    public UserController(UserService userService, ApplicationEventPublisher eventPublisher, RequestService requestBuilder) {
         this.userService = userService;
         this.eventPublisher = eventPublisher;
+        this.requestBuilder = requestBuilder;
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest, final HttpServletRequest httpRequest) {
         User user = userService.registerUser(registerRequest);
-        eventPublisher.publishEvent(new RegistrationCompleteEvent(user, "http://"
-                + httpRequest.getServerName()
-                + ":" + httpRequest.getLocalPort()
-                + httpRequest.getContextPath()));
+        eventPublisher.publishEvent(new RegistrationCompleteEvent(user,
+                applicationUrl(httpRequest)));
         return ResponseEntity.ok("Created");
     }
 
+    @GetMapping("/resendVerifyToken")
+    public ResponseEntity<String> resendVerifyToken(@RequestParam("token") String oldToken,
+                                                    HttpServletRequest httpRequest) {
+        VerificationToken verificationToken = userService.generateNewVerificationToken(oldToken);
+        User user = verificationToken.getUser();
+        resendVerifyTokenMail(user, applicationUrl(httpRequest));
+        return ResponseEntity.ok("Verification token sent");
+    }
+
+    private void resendVerifyTokenMail(User user, String s) {
+    }
+
     @GetMapping("/verifyToken")
-    public ResponseEntity<String> verifyRegistration (@RequestParam("token") String token){
-     userService.validateVerificationToken(token);
-    return ResponseEntity.ok("Verified");
+    public ResponseEntity<String> verifyToken(@RequestParam("token") String token) {
+        userService.validateVerificationToken(token);
+        return ResponseEntity.ok("Verified");
+    }
+
+    private String applicationUrl(HttpServletRequest httpRequest) {
+        return "http://"
+                + httpRequest.getServerName()
+                + ":" + httpRequest.getLocalPort()
+                + httpRequest.getContextPath();
     }
 
 }
