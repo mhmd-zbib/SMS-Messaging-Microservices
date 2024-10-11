@@ -1,29 +1,30 @@
 package dev.zbib.server.service;
 
-import dev.zbib.server.exception.Exceptions.BadRequestException;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.model.entity.VerificationToken;
 import dev.zbib.server.model.enums.UserRole;
 import dev.zbib.server.model.request.RegisterRequest;
 import dev.zbib.server.repository.UserRepository;
 import dev.zbib.server.repository.VerificationTokenRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.UUID;
-
 @Service
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final VerificationTokenRepository verificationTokenRepository;
+    private VerificationTokenService verificationTokenService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository) {
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenService verificationTokenService) {
+        this.verificationTokenService = verificationTokenService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.verificationTokenRepository = verificationTokenRepository;
     }
 
     public User registerUser(RegisterRequest request) {
@@ -34,38 +35,17 @@ public class UserService {
                 .enabled(false)
                 .role(UserRole.USER)
                 .build();
-        return userRepository.save(user);
+
+        User newUser = userRepository.save(user);
+        verificationTokenService.generateToken(newUser);
+        return newUser;
     }
 
-    public void saveVerificationToken(String token, User user) {
-        VerificationToken verificationToken = new VerificationToken(user, token);
-        verificationTokenRepository.save(verificationToken);
-    }
-
-    public void validateVerificationToken(String token) {
-        VerificationToken verificationToken = getVerificationToken(token);
-        User user = verificationToken.getUser();
-        Calendar calendar = Calendar.getInstance();
-
-        if (verificationToken.getExpiryTime().getTime() - calendar.getTime().getTime() <= 0) {
-            verificationTokenRepository.delete(verificationToken);
-            throw new BadRequestException("Verification token expired");
-        }
-
+    public void verifyUser(String token) {
+        VerificationToken userToken = verificationTokenService.validateToken(token);
+        User user = userToken.getUser();
         user.setEnabled(true);
         userRepository.save(user);
-    }
-
-    public VerificationToken getVerificationToken(String token) {
-        return verificationTokenRepository
-                .findByToken(token)
-                .orElseThrow(() -> new BadRequestException("Invalid verification token"));
-    }
-
-    public VerificationToken generateNewVerificationToken(String oldToken) {
-        VerificationToken verificationToken = getVerificationToken(oldToken);
-        verificationToken.setToken(UUID.randomUUID().toString());
-        verificationTokenRepository.save(verificationToken);
-        return verificationToken;
+        log.info("User verified successfully");
     }
 }

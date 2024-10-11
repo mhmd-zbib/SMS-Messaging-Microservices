@@ -13,6 +13,7 @@ public class WebSecurityConfig {
     private static final String[] WHITELIST_URLS = {
             "user/register",
             "user/login",
+            "user/verify",
             "user/token/**"
     };
 
