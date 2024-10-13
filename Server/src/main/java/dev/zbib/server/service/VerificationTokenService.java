@@ -3,10 +3,10 @@ package dev.zbib.server.service;
 import dev.zbib.server.exception.Exceptions.BadRequestException;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.model.entity.VerificationToken;
-import dev.zbib.server.repository.UserRepository;
 import dev.zbib.server.repository.VerificationTokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -21,6 +21,7 @@ public class VerificationTokenService {
 
     private final VerificationTokenRepository verificationTokenRepository;
 
+    @Autowired
     public VerificationTokenService(VerificationTokenRepository verificationTokenRepository) {
         this.verificationTokenRepository = verificationTokenRepository;
     }

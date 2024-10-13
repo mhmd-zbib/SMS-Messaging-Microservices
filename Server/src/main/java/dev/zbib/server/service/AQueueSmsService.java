@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
  */
 
 
-public abstract class AQueueSmsService implements ISmsProviderService {
+public abstract class AQueueSmsService implements iSmsProviderService {
 
     @Autowired
     protected RabbitTemplate rabbitTemplate;

@@ -1,7 +1,7 @@
 package dev.zbib.server.exception;
 
 import dev.zbib.server.exception.Exceptions.BadRequestException;
-import dev.zbib.server.exception.Exceptions.ResourceNotFoundException;
+import dev.zbib.server.exception.Exceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,10 +17,10 @@ public class GlobalExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex) {
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(NotFoundException ex) {
         LOGGER.error(ex.getMessage());
         ErrorDetails errorDetails = new ErrorDetails(ex.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);

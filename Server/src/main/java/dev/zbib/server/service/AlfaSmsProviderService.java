@@ -2,7 +2,6 @@ package dev.zbib.server.service;
 
 import dev.zbib.server.model.request.SmsProviderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -13,7 +12,7 @@ import reactor.core.publisher.Mono;
  * and here it uses them depending on its context. Using bean {@link WebClient} bean in config.</p>
  */
 @Service
-public class AlfaSmsProviderService implements ISmsProviderService {
+public class AlfaSmsProviderService implements iSmsProviderService {
 
     private final WebClient webClient;
 

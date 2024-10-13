@@ -10,10 +10,10 @@ import java.util.Date;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class VerificationToken {
+public class VerificationToken  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +25,6 @@ public class VerificationToken {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",
             nullable = false,
-            foreignKey = @ForeignKey(name = "FK_USER_VERIFY_TOKEN"))
+            foreignKey = @ForeignKey(name = "FK_VERIFY_TOKEN"))
     private User user;
 }
-
-

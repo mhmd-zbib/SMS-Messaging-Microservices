@@ -27,7 +27,7 @@ public class SmsProviderService {
      */
 
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
-        ISmsProviderService provider = providerSelector.getSmsProvider();
+        iSmsProviderService provider = providerSelector.getSmsProvider();
         return provider.sendSms(smsProviderRequest);
     }
 }

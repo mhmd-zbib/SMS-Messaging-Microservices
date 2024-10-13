@@ -26,7 +26,7 @@ public class SmsProviderFactory {
         this.alfaSmsProvider = alfaSmsProvider;
     }
 
-    public ISmsProviderService getSmsProvider() {
+    public iSmsProviderService getSmsProvider() {
         int choice = random.nextInt(3);
         switch (choice) {
             case 0:

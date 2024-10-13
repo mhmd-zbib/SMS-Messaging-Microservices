@@ -35,10 +35,9 @@ public class UserController {
         return ResponseEntity.ok("Verified");
     }
 
-    @GetMapping("/token/resend")
+    @GetMapping("/resendToken")
     public ResponseEntity<String> resendVerifyToken(@RequestParam("token") String oldToken) {
         verificationTokenService.regenerateToken(oldToken);
         return ResponseEntity.ok("Verification token sent ");
     }
-
 }

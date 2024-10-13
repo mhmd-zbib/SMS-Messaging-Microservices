@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
  * providers will need to use in the future. Any added providers needs to implement this interface to follow
  * the organized rules for managing the logic</p>
  */
-public interface ISmsProviderService {
+public interface iSmsProviderService {
 
     Mono<String> sendSms(SmsProviderRequest smsProviderRequest);
 
