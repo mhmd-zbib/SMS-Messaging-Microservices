@@ -2,6 +2,7 @@ package dev.zbib.server.exception;
 
 import dev.zbib.server.exception.Exceptions.BadRequestException;
 import dev.zbib.server.exception.Exceptions.NotFoundException;
+import dev.zbib.server.exception.Exceptions.UnAuthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,17 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails("Something went wrong");
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    @ExceptionHandler(UnAuthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ResponseEntity<ErrorDetails> handleUnAuthorizedException(Exception ex) {
+        LOGGER.error(ex.getMessage());
+        ErrorDetails errorDetails = new ErrorDetails("User not authorized");
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
