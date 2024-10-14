@@ -1,6 +1,7 @@
 package dev.zbib.server.service;
 
 import dev.zbib.server.model.request.SmsProviderRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,18 +13,10 @@ import reactor.core.publisher.Mono;
  * and here it uses them depending on its context. Using bean {@link WebClient} bean in config.</p>
  */
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class AlfaSmsProviderService implements iSmsProviderService {
 
     private final WebClient webClient;
-
-
-
-
-    @Autowired
-    public AlfaSmsProviderService(WebClient webClient) {
-        this.webClient = webClient;
-    }
-
 
     /**
      * <h3>Alfa SMS message sender</h3>

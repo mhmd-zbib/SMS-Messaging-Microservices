@@ -10,7 +10,5 @@ import reactor.core.publisher.Mono;
  * the organized rules for managing the logic</p>
  */
 public interface iSmsProviderService {
-
     Mono<String> sendSms(SmsProviderRequest smsProviderRequest);
-
 }

@@ -2,6 +2,7 @@ package dev.zbib.server.service;
 
 import dev.zbib.server.config.RabbitMQConfig;
 import dev.zbib.server.model.request.SmsProviderRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
@@ -13,11 +14,10 @@ import reactor.core.publisher.Mono;
  * and here it uses them depending on its context. Using bean {@link RabbitTemplate} bean in config.
  */
 
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+public abstract class aQueueSmsService implements iSmsProviderService {
 
-public abstract class AQueueSmsService implements iSmsProviderService {
-
-    @Autowired
-    protected RabbitTemplate rabbitTemplate;
+    protected final RabbitTemplate rabbitTemplate;
 
     protected abstract String getRoutingKey();
 
@@ -32,10 +32,8 @@ public abstract class AQueueSmsService implements iSmsProviderService {
                 .message(smsProviderRequest.getMessage())
                 .phoneNumber(smsProviderRequest.getPhoneNumber())
                 .build();
-
         rabbitTemplate.convertAndSend(RabbitMQConfig.SMS_EXCHANGE,
                 getRoutingKey(), jsonRequest);
-
         return Mono.just("Message sent");
     }
 }

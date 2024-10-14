@@ -1,6 +1,9 @@
 package dev.zbib.server.service;
 
+import dev.zbib.server.model.request.MessageRequest;
+import dev.zbib.server.utils.CodeGenerator;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +22,7 @@ public class ScheduledMessageService {
     }
 
     /**
-     * <h3>Internal server scheduled messages</h3>
+     * <h2>Internal server scheduled messages</h2>
      * <p>This service creates a code every 3 min and saves it on the database with logging the value</p>
      */
 //    @Scheduled(fixedRate = 300000)
@@ -29,6 +32,6 @@ public class ScheduledMessageService {
 //                .message(code)
 //                .build();
 //        String messageCode = messageService.sendMessage(messageRequest).getMessage();
-//        LOGGER.info("Your new code is: {}", messageCode);
+//        log.info("Your new code is: {}", messageCode);
 //    }
 }

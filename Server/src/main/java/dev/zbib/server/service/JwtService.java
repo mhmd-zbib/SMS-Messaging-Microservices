@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * <h2>JWT util service</h2>
+ * <p>This service handles everything related to JWT configurations</p>
+ */
 @Service
 public class JwtService {
 
@@ -27,14 +31,11 @@ public class JwtService {
     @Value("${app.jwt.refreshExpiration}")
     private long refreshExpiration;
 
-    public String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, refreshExpiration);
-    }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
+    /**
+     * <h2>Generate base JWT</h2>
+     * <p>This method is a general way of create JWT, we can control it to set what type of JWT we need and the usage of it</p>
+     */
     public String generateToken(Map<String, Object> extraClaims,
                                 UserDetails userDetails,
                                 long expiration) {
@@ -47,10 +48,34 @@ public class JwtService {
                 .compact();
     }
 
-    public String generateToken(UserDetails userDetails) {
+    /**
+     * <h2>Generate access token</h2>
+     * <p>This method connects to {@generateToken} by that it automatically passes the expiration date</p>
+     */
+    public String generateAccessToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails, accessExpiration);
     }
 
+    /**
+     * <h2>Generate refresh token</h2>
+     * <p>Same as {@generateAccessToken}</p>
+     */
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails, refreshExpiration);
+    }
+
+    /**
+     * <h2>Extracts the username from the JWT bearer</h2>
+     * <p>This method takes the jwt token and uses the {@extractClaim} to get the username that is connected with this token</p>
+     */
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    /**
+     * <h2>Validates the token</h2>
+     * <p>This method gets the date and the user of the JWT and makes sure everything is set</p>
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);

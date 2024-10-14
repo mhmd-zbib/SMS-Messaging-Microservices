@@ -25,7 +25,6 @@ public class SmsProviderService {
      * <p>This method takes {@link SmsProviderRequest} which got base content and params for all the requests of the user
      * it uses {@link SmsProviderFactory} to select the SMS provider and forwards the message</p>
      */
-
     public Mono<String> sendSms(SmsProviderRequest smsProviderRequest) {
         iSmsProviderService provider = providerSelector.getSmsProvider();
         return provider.sendSms(smsProviderRequest);

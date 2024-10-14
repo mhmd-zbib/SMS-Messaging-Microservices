@@ -34,6 +34,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtTokenRepository jwtTokenRepository;
 
+    /**
+     * <h2>User register service with JWT</h2>
+     * <p>This service creates a new user and authenticate them with jwt</p>
+     */
     public AuthResponse register(RegisterRequest request) {
         User user = User.builder()
                 .firstName(request.getFirstName())
@@ -43,9 +47,9 @@ public class AuthService {
                 .email(request.getEmail())
                 .role(UserRole.USER)
                 .build();
-        var savedUser = userRepository.save(user);
-        var accessToken = jwtService.generateToken(savedUser);
-        var refreshToken = jwtService.generateRefreshToken(savedUser);
+        User savedUser = userRepository.save(user);
+        String accessToken = jwtService.generateAccessToken(savedUser);
+        String refreshToken = jwtService.generateRefreshToken(savedUser);
         saveUserToken(savedUser, accessToken);
         log.info("Registered user: {}", savedUser.getUsername());
         return AuthResponse.builder()
@@ -54,12 +58,16 @@ public class AuthService {
                 .build();
     }
 
+    /**
+     * <h2>Login user with auth</h2>
+     * <p>User login that validates the credentials and returns a jwt with the username</p>
+     */
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NotFoundException("not found"));
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
@@ -68,6 +76,38 @@ public class AuthService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    /**
+     * <h2>Creates another token from the access token</h2>
+     * <p>This service takes the jwt and from the old one it creates an access token</p>
+     */
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        final String authHeader = request.getHeader("Authorization");
+        final String refreshToken;
+        final String userName;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userName = jwtService.extractUsername(refreshToken);
+        if (userName != null) {
+            var user = userRepository.findByUsername(userName)
+                    .orElseThrow(() -> new NotFoundException("User not found"));
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtService.generateAccessToken(user);
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
+                var authResponse = AuthResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
     }
 
     private void saveUserToken(User user, String jwtToken) {
@@ -93,34 +133,6 @@ public class AuthService {
         });
         jwtTokenRepository.saveAll(validUserTokens);
         log.info("Revoked '{}' tokens for: {}", validUserTokens.size(), user.getUsername());
-    }
-
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String refreshToken;
-        final String userName;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
-        }
-        refreshToken = authHeader.substring(7);
-        userName = jwtService.extractUsername(refreshToken);
-        if (userName != null) {
-            var user = userRepository.findByUsername(userName)
-                    .orElseThrow(() -> new NotFoundException("User not found"));
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);
-                revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
-                var authResponse = AuthResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-            }
-        }
     }
 }
 
