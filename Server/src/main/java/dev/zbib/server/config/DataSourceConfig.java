@@ -1,9 +1,9 @@
 package dev.zbib.server.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.  Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -12,10 +12,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Configuration
+@Slf4j
 public class DataSourceConfig {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceConfig.class);
-
 
     @Value("${spring.datasource.url}")
     private String postgresUrl;
@@ -48,11 +46,11 @@ public class DataSourceConfig {
 
         try (Connection conn = dataSource.getConnection()) {
             if (conn.isValid(2)) {
-                LOGGER.info("Successfully connected to PostgreSQL");
+                log.info("Successfully connected to PostgreSQL");
                 return dataSource;
             }
         } catch (SQLException e) {
-            LOGGER.error("Failed to connect to PostgreSQL, falling back to H2 database", e);
+            log.error("Failed to connect to PostgreSQL, falling back to H2 database", e);
         }
 
         DriverManagerDataSource h2DataSource = new DriverManagerDataSource();
@@ -60,7 +58,7 @@ public class DataSourceConfig {
         h2DataSource.setUrl(h2Url);
         h2DataSource.setUsername(h2Username);
         h2DataSource.setPassword(h2Password);
-        LOGGER.info("Successfully connected to H2 database");
+        log.info("Successfully connected to H2 database");
 
         return h2DataSource;
     }

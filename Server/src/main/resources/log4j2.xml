@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="WARN">
+    <Properties>
+        <Property name="log-path">logs</Property>
+    </Properties>
     <Appenders>
-        <!-- Console Appender for standard output -->
-        <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{ISO8601} [%t] %-5level - %msg%n"/>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-
-        <!-- Rolling File Appender for continuous logging -->
-        <RollingFile name="ROLLING_FILE"
-                     fileName="logs/app.log"
-                     filePattern="logs/app-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="%d{ISO8601} [%t] %-5level - %msg%n"/>
+        <RollingFile name="FileAppender" fileName="${log-path}/app.log"
+                     filePattern="${log-path}/app-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true"/> <!-- Daily rollover -->
-                <SizeBasedTriggeringPolicy size="10MB"/> <!-- Rollover after 10MB -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="30"/> <!-- Keep up to 30 rolled files -->
         </RollingFile>
     </Appenders>
-
     <Loggers>
-        <!-- Adjust log level to WARN to reduce log volume -->
-        <Root level="WARN"> <!-- Capture warnings and errors only -->
-            <AppenderRef ref="CONSOLE"/>
-            <AppenderRef ref="ROLLING_FILE"/>
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -19,12 +19,12 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebSecurityConfig {
 
-
     private static final String[] WHITELIST_URLS = {
             "auth/register",
             "auth/login",
+            "auth/logout",
+            "auth/refresh-token",
             "auth/verify",
-            "auth/token/**"
     };
 
     private final AuthenticationProvider authenticationProvider;
