@@ -1,11 +1,8 @@
 package dev.zbib.server.service;
 
-import dev.zbib.server.model.entity.User;
-import dev.zbib.server.model.entity.VerificationToken;
 import dev.zbib.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,9 +11,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class UserService implements UserDetailsService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final VerificationTokenService verificationTokenService;

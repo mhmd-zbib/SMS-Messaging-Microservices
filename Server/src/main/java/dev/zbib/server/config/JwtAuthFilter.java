@@ -7,8 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,10 +21,9 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-
+@Log4j2
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LogManager.getLogger(JwtAuthFilter.class);
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
@@ -33,8 +31,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
-
-        log.info("Verifying {}", request.getRequestURI());
 
         final String authHeader = request.getHeader("Authorization");
         final String username;
@@ -45,10 +41,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+
+        log.info("Verifying: {}", request.getRequestURI());
+
         jwt = authHeader.substring(7);
         username = jwtService.extractUsername(jwt);
-
-        log.info("Extracted username is {}", username);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);

@@ -14,8 +14,7 @@ import dev.zbib.server.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,9 +25,9 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class AuthService {
 
-    private static final Logger log = LogManager.getLogger(AuthService.class);
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -48,6 +47,7 @@ public class AuthService {
         var accessToken = jwtService.generateToken(savedUser);
         var refreshToken = jwtService.generateRefreshToken(savedUser);
         saveUserToken(savedUser, accessToken);
+        log.info("Registered user: {}", savedUser.getUsername());
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -55,8 +55,6 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        log.info("User {} is logging in ", request.getEmail());
-        System.out.println("User " + request.getEmail() + " logged in");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
@@ -65,6 +63,7 @@ public class AuthService {
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
+        log.info("Logged in user: {} ", request.getEmail());
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -84,18 +83,16 @@ public class AuthService {
 
     private void revokeAllUserTokens(User user) {
         var validUserTokens = jwtTokenRepository.findAllValidTokenByUser(user.getId());
-        log.info("Revoking token for {}", user.getUsername());
         if (validUserTokens.isEmpty()) {
-            log.info("No tokens found for user {}", user.getUsername());
+            log.info("No tokens found for user: {}", user.getUsername());
             return;
         }
         validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
-        log.info("Tokens revoked {}", validUserTokens.size());
         jwtTokenRepository.saveAll(validUserTokens);
-        log.info("Tokens has been revoked");
+        log.info("Revoked '{}' tokens for: {}", validUserTokens.size(), user.getUsername());
     }
 
     public void refreshToken(
@@ -110,7 +107,6 @@ public class AuthService {
         }
         refreshToken = authHeader.substring(7);
         userName = jwtService.extractUsername(refreshToken);
-        System.out.println(userName + " is the thing we are using");
         if (userName != null) {
             var user = userRepository.findByUsername(userName)
                     .orElseThrow(() -> new NotFoundException("User not found"));

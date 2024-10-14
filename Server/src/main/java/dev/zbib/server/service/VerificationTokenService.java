@@ -4,8 +4,7 @@ import dev.zbib.server.exception.Exceptions.BadRequestException;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.model.entity.VerificationToken;
 import dev.zbib.server.repository.VerificationTokenRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +13,10 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Log4j2
 public class VerificationTokenService {
 
     private static final int EXPIRATION_TIME = 10; // 10 minutes
-    private static final Logger log = LoggerFactory.getLogger(VerificationTokenService.class);
 
     private final VerificationTokenRepository verificationTokenRepository;
 

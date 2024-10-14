@@ -40,7 +40,6 @@ public class AuthController {
     ) throws IOException {
         authService.refreshToken(request, response);
     }
-
 }
 
 
