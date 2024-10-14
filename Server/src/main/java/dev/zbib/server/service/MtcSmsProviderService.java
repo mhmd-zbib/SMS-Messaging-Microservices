@@ -2,8 +2,8 @@ package dev.zbib.server.service;
 
 import dev.zbib.server.model.request.MtcSmsJsonRequest;
 import dev.zbib.server.model.request.SmsProviderRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,16 +16,10 @@ import reactor.core.publisher.Mono;
  */
 
 @Service
-public class MtcSmsProviderService implements ISmsProviderService {
-
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+public class MtcSmsProviderService implements iSmsProviderService {
 
     private final WebClient webClient;
-
-    @Autowired
-    public MtcSmsProviderService(WebClient webClient) {
-        this.webClient = webClient;
-    }
-
 
     /**
      * <h3>Mtc SMS message sender</h3>
