@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class User implements UserDetails {
 
     @Id
@@ -28,7 +29,6 @@ public class User implements UserDetails {
     private String lastName;
 
     @Column(unique = true, nullable = false, length = 25)
-
     private String username;
 
     @Column(length = 60)

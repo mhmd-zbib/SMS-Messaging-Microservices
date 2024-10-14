@@ -26,13 +26,13 @@ public class ScheduledMessageService {
      * <h3>Internal server scheduled messages</h3>
      * <p>This service creates a code every 3 min and saves it on the database with logging the value</p>
      */
-    @Scheduled(fixedRate = 300000)
-    private void sendScheduleMessage() {
-        String code = CodeGenerator.generate6DigitCode();
-        MessageRequest messageRequest = MessageRequest.builder()
-                .message(code)
-                .build();
-        String messageCode = messageService.sendMessage(messageRequest).getMessage();
-        LOGGER.info("Your new code is: {}", messageCode);
-    }
+//    @Scheduled(fixedRate = 300000)
+//    private void sendScheduleMessage() {
+//        String code = CodeGenerator.generate6DigitCode();
+//        MessageRequest messageRequest = MessageRequest.builder()
+//                .message(code)
+//                .build();
+//        String messageCode = messageService.sendMessage(messageRequest).getMessage();
+//        LOGGER.info("Your new code is: {}", messageCode);
+//    }
 }

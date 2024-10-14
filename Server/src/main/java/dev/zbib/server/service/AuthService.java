@@ -1,56 +1,123 @@
 package dev.zbib.server.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.zbib.server.exception.Exceptions.NotFoundException;
+import dev.zbib.server.model.entity.JwtToken;
 import dev.zbib.server.model.entity.User;
+import dev.zbib.server.model.enums.TokenType;
 import dev.zbib.server.model.enums.UserRole;
 import dev.zbib.server.model.request.LoginRequest;
 import dev.zbib.server.model.request.RegisterRequest;
 import dev.zbib.server.model.response.AuthResponse;
+import dev.zbib.server.repository.JwtTokenRepository;
 import dev.zbib.server.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final JwtTokenRepository jwtTokenRepository;
 
     public AuthResponse register(RegisterRequest request) {
         User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
                 .role(UserRole.USER)
                 .build();
-
-        userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
+        var savedUser = userRepository.save(user);
+        var accessToken = jwtService.generateToken(savedUser);
+        var refreshToken = jwtService.generateRefreshToken(savedUser);
+        saveUserToken(savedUser, accessToken);
         return AuthResponse.builder()
-                .accessToken(jwtToken)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
+    }
+
+    private void saveUserToken(User user, String jwtToken) {
+        var token = JwtToken.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        jwtTokenRepository.save(token);
     }
 
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsernameOrEmail(),
-                        request.getPassword())
-        );
-        var user = userRepository.findByUsernameOrEmail(request.getUsernameOrEmail(),
-                request.getUsernameOrEmail()).orElseThrow();
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new NotFoundException("not found"));
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
         return AuthResponse.builder()
                 .accessToken(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
     }
+
+    private void revokeAllUserTokens(User user) {
+        var validUserTokens = jwtTokenRepository.findAllValidTokenByUser(user.getId());
+        if (validUserTokens.isEmpty()) {
+            return;
+        }
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        jwtTokenRepository.saveAll(validUserTokens);
+    }
+
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        final String authHeader = request.getHeader("Authorization");
+        final String refreshToken;
+        final String userEmail;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+        if (userEmail != null) {
+            var user = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new NotFoundException("not found"));
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtService.generateToken(user);
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
+                var authResponse = AuthResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
+    }
+
 }
 
