@@ -1,4 +1,4 @@
-package dev.zbib.server.service;
+package dev.zbib.server.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,16 +20,14 @@ import java.util.function.Function;
  * <p>This service handles everything related to JWT configurations</p>
  */
 @Service
-public class JwtService {
+public class JwtUtils {
 
     @Value("${app.jwt.secret}")
     private String secretKey;
 
-    @Value("${app.jwt.expiration}")
-    private long accessExpiration;
+    private long accessExpiration = 15 * 60 * 1000;
 
-    @Value("${app.jwt.refreshExpiration}")
-    private long refreshExpiration;
+    private long refreshExpiration = 7 * 24 * 60 * 60 * 1000;
 
 
     /**

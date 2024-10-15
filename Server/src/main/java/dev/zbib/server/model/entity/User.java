@@ -28,9 +28,6 @@ public class User implements UserDetails {
 
     private String lastName;
 
-    @OneToMany(mappedBy = "user")
-    private List<JwtToken> jwtToken;
-
     @Column(unique = true, nullable = false, length = 25)
     private String username;
 
