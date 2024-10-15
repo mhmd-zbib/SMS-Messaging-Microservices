@@ -25,9 +25,10 @@ public class JwtUtils {
     @Value("${app.jwt.secret}")
     private String secretKey;
 
-    private long accessExpiration = 15 * 60 * 1000;
 
-    private long refreshExpiration = 7 * 24 * 60 * 60 * 1000;
+    private long accessExpiration = 15;
+
+    private long refreshExpiration = 7;
 
 
     /**

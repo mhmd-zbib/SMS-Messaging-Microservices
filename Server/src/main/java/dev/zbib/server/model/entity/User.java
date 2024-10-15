@@ -31,6 +31,9 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false, length = 25)
     private String username;
 
+    @OneToMany(mappedBy = "user")
+    private List<RefreshToken> refreshTokens;
+
     @Column(length = 60)
     private String password;
 

@@ -3,6 +3,7 @@ package dev.zbib.server.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.zbib.server.exception.Exceptions.NotFoundException;
 import dev.zbib.server.exception.Exceptions.UnAuthorizedException;
+import dev.zbib.server.model.entity.RefreshToken;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.model.enums.UserRole;
 import dev.zbib.server.model.request.LoginRequest;
@@ -28,9 +29,10 @@ import java.io.IOException;
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtService;
+    private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * <h2>User register service with JWT</h2>
@@ -46,8 +48,8 @@ public class AuthService {
                 .role(UserRole.USER)
                 .build();
         User savedUser = userRepository.save(user);
-        String accessToken = jwtService.generateAccessToken(savedUser);
-        String refreshToken = jwtService.generateRefreshToken(savedUser);
+        String accessToken = jwtUtils.generateAccessToken(savedUser);
+        String refreshToken = jwtUtils.generateRefreshToken(savedUser);
         log.info("Registered user: {}", savedUser.getUsername());
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -64,8 +66,8 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NotFoundException("not found"));
-        var jwtToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        var jwtToken = jwtUtils.generateAccessToken(user);
+        var refreshToken = jwtUtils.generateRefreshToken(user);
         log.info("Logged in user: {} ", request.getEmail());
         return AuthResponse.builder()
                 .accessToken(jwtToken)
@@ -81,19 +83,22 @@ public class AuthService {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String refreshToken;
+        final RefreshToken refreshTokenFromDb;
         final String userName;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
+
+        String refreshToken = extractRefreshToken(request);
+        userName = jwtUtils.extractUsername(refreshToken);
+        refreshTokenFromDb = refreshTokenService.getByRefreshToken(refreshToken);
+
+        if (refreshTokenFromDb == null) {
+            throw new UnAuthorizedException("unauthorized");
         }
-        refreshToken = authHeader.substring(7);
-        userName = jwtService.extractUsername(refreshToken);
+
         if (userName != null) {
             var user = userRepository.findByUsername(userName)
                     .orElseThrow(() -> new UnAuthorizedException("User not found"));
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateAccessToken(user);
+            if (jwtUtils.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtUtils.generateAccessToken(user);
                 var authResponse = AuthResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
@@ -102,5 +107,22 @@ public class AuthService {
             }
         }
     }
+
+    public void logoutAllDevices(HttpServletRequest request,
+                                 HttpServletResponse response) {
+
+        String refreshToken = extractRefreshToken(request);
+        User user = refreshTokenService.getByRefreshToken(refreshToken).getUser();
+        refreshTokenService.revokeAllUserRefreshTokens(user);
+    }
+
+    private String extractRefreshToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        throw new IllegalArgumentException("Invalid Authorization header");
+    }
+
 }
 
