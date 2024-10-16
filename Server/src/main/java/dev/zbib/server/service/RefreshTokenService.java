@@ -1,6 +1,5 @@
 package dev.zbib.server.service;
 
-import dev.zbib.server.exception.Exceptions.UnAuthorizedException;
 import dev.zbib.server.model.entity.RefreshToken;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.repository.RefreshTokenRepository;
@@ -16,24 +15,28 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public RefreshToken getByRefreshToken(String token) {
-        return refreshTokenRepository.findByRefreshToken(token)
-                .orElseThrow(() -> new UnAuthorizedException("Token expired please login"));
-    }
-
     public void saveUserRefreshToken(User user,
                                      String refreshToken) {
         RefreshToken token = RefreshToken.builder()
-                .refreshToken(refreshToken)
+                .token(refreshToken)
                 .user(user)
+                .isRevoked(false)
                 .build();
         refreshTokenRepository.save(token);
     }
 
     public void revokeAllUserRefreshTokens(User user) {
-        List<RefreshToken> userRefreshTokens = refreshTokenRepository.findAllByUserId(user.getId());
-        if (!userRefreshTokens.isEmpty()) {
-            refreshTokenRepository.deleteAll(userRefreshTokens);
+        List<RefreshToken> userRefreshTokens = refreshTokenRepository.findByUser(user);
+        for (RefreshToken t : userRefreshTokens) {
+            t.setRevoked(true);
         }
+        refreshTokenRepository.saveAll(userRefreshTokens);
     }
+
+    public void revokeRefreshToken(String refreshToken) {
+        RefreshToken userToken = refreshTokenRepository.findByToken(refreshToken);
+        userToken.setRevoked(true);
+        refreshTokenRepository.save(userToken);
+    }
+
 }

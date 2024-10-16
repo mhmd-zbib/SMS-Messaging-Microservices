@@ -22,6 +22,7 @@ public class RefreshToken {
     @GeneratedValue
     private Long id;
 
-    private String refreshToken;
+    private String token;
 
+    private boolean  isRevoked;
 }

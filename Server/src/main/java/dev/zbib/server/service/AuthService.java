@@ -2,8 +2,6 @@ package dev.zbib.server.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.zbib.server.exception.Exceptions.NotFoundException;
-import dev.zbib.server.exception.Exceptions.UnAuthorizedException;
-import dev.zbib.server.model.entity.RefreshToken;
 import dev.zbib.server.model.entity.User;
 import dev.zbib.server.model.enums.UserRole;
 import dev.zbib.server.model.request.LoginRequest;
@@ -21,8 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
@@ -33,9 +29,11 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
+    private final UserService userService;
+    private final ObjectMapper jacksonObjectMapper;
 
     /**
-     * <h2>User register service with JWT</h2>
+     * <h3>User register service with JWT</h3>
      * <p>This service creates a new user and authenticate them with jwt</p>
      */
     public AuthResponse register(RegisterRequest request) {
@@ -53,7 +51,7 @@ public class AuthService {
     }
 
     /**
-     * <h2>Login user with auth</h2>
+     * <h3>Login user with auth</h3>
      * <p>User login that validates the credentials and returns a jwt with the username</p>
      */
     public AuthResponse login(LoginRequest request) {
@@ -68,41 +66,27 @@ public class AuthService {
      * <h2>Creates another token from the access token</h2>
      * <p>This service takes the jwt and from the old one it creates an access token</p>
      */
-    public void refreshToken(
+    public AuthResponse refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws IOException {
-        final RefreshToken refreshTokenFromDb;
-        final String userName;
-
+    ) {
         String refreshToken = extractRefreshToken(request);
-        userName = jwtUtils.extractUsername(refreshToken);
-        refreshTokenFromDb = refreshTokenService.getByRefreshToken(refreshToken);
+        String username = jwtUtils.extractUsername(refreshToken);
+        User user = userService.getByUsername(username);
 
-        if (refreshTokenFromDb == null) {
-            throw new UnAuthorizedException("unauthorized");
-        }
 
-        if (userName != null) {
-            var user = userRepository.findByUsername(userName)
-                    .orElseThrow(() -> new UnAuthorizedException("User not found"));
-            if (jwtUtils.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtUtils.generateAccessToken(user);
-                var authResponse = AuthResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-            }
-        }
+
+        AuthResponse authResponse = generateUserTokens(user);
+        refreshTokenService.saveUserRefreshToken(user, authResponse.getRefreshToken());
+
+        return authResponse;
     }
 
-    public void logoutAllDevices(HttpServletRequest request,
-                                 HttpServletResponse response) {
-        String refreshToken = extractRefreshToken(request);
-        User user = refreshTokenService.getByRefreshToken(refreshToken).getUser();
-        refreshTokenService.revokeAllUserRefreshTokens(user);
-    }
+//    public void logoutAllDevices(HttpServletRequest request, HttpServletResponse response) {
+//        String refreshToken = extractRefreshToken(request);
+//        User user = refreshTokenService.getByRefreshToken(refreshToken).getUser();
+//        refreshTokenService.revokeAllUserRefreshTokens(user);
+//    }
 
     private String extractRefreshToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
@@ -115,13 +99,13 @@ public class AuthService {
     private AuthResponse generateUserTokens(User user) {
         String jwtToken = jwtUtils.generateAccessToken(user);
         String refreshToken = jwtUtils.generateRefreshToken(user);
+
         refreshTokenService.saveUserRefreshToken(user, refreshToken);
-        log.info("Logged in user: {} ", user.getEmail());
+        log.info("authenticated user: {} ", user.getEmail());
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
     }
-
 }
 

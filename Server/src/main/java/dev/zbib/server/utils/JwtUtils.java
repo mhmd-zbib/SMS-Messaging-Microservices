@@ -26,9 +26,9 @@ public class JwtUtils {
     private String secretKey;
 
 
-    private long accessExpiration = 15;
+    private long accessExpiration = 15 ; // 15 minutes
 
-    private long refreshExpiration = 7;
+    private long refreshExpiration = 7 ; // 7 days
 
 
     /**
