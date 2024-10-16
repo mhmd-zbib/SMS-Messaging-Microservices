@@ -39,22 +39,17 @@ public class AuthService {
      * <p>This service creates a new user and authenticate them with jwt</p>
      */
     public AuthResponse register(RegisterRequest request) {
-        User user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .email(request.getEmail())
-                .role(UserRole.USER)
-                .build();
-        User savedUser = userRepository.save(user);
-        String accessToken = jwtUtils.generateAccessToken(savedUser);
-        String refreshToken = jwtUtils.generateRefreshToken(savedUser);
-        log.info("Registered user: {}", savedUser.getUsername());
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        User user = userRepository.save(
+                User.builder()
+                        .firstName(request.getFirstName())
+                        .lastName(request.getLastName())
+                        .username(request.getUsername())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .email(request.getEmail())
+                        .role(UserRole.USER)
+                        .build()
+        );
+        return generateUserTokens(user);
     }
 
     /**
@@ -66,13 +61,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NotFoundException("not found"));
-        var jwtToken = jwtUtils.generateAccessToken(user);
-        var refreshToken = jwtUtils.generateRefreshToken(user);
-        log.info("Logged in user: {} ", request.getEmail());
-        return AuthResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+        return generateUserTokens(user);
     }
 
     /**
@@ -110,7 +99,6 @@ public class AuthService {
 
     public void logoutAllDevices(HttpServletRequest request,
                                  HttpServletResponse response) {
-
         String refreshToken = extractRefreshToken(request);
         User user = refreshTokenService.getByRefreshToken(refreshToken).getUser();
         refreshTokenService.revokeAllUserRefreshTokens(user);
@@ -122,6 +110,17 @@ public class AuthService {
             return authHeader.substring(7);
         }
         throw new IllegalArgumentException("Invalid Authorization header");
+    }
+
+    private AuthResponse generateUserTokens(User user) {
+        String jwtToken = jwtUtils.generateAccessToken(user);
+        String refreshToken = jwtUtils.generateRefreshToken(user);
+        refreshTokenService.saveUserRefreshToken(user, refreshToken);
+        log.info("Logged in user: {} ", user.getEmail());
+        return AuthResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
 }

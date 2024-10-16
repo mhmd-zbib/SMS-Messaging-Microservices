@@ -21,12 +21,13 @@ public class RefreshTokenService {
                 .orElseThrow(() -> new UnAuthorizedException("Token expired please login"));
     }
 
-    public RefreshToken createToken(String refreshToken, User user) {
+    public void saveUserRefreshToken(User user,
+                                     String refreshToken) {
         RefreshToken token = RefreshToken.builder()
                 .refreshToken(refreshToken)
                 .user(user)
                 .build();
-        return token;
+        refreshTokenRepository.save(token);
     }
 
     public void revokeAllUserRefreshTokens(User user) {
