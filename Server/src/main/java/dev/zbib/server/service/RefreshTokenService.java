@@ -15,8 +15,7 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public void saveUserRefreshToken(User user,
-                                     String refreshToken) {
+    public void saveUserRefreshToken(User user, String refreshToken) {
         RefreshToken token = RefreshToken.builder()
                 .token(refreshToken)
                 .user(user)
@@ -34,9 +33,13 @@ public class RefreshTokenService {
     }
 
     public void revokeRefreshToken(String refreshToken) {
-        RefreshToken userToken = refreshTokenRepository.findByToken(refreshToken);
-        userToken.setRevoked(true);
-        refreshTokenRepository.save(userToken);
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken);
+        token.setRevoked(true);
+        refreshTokenRepository.save(token);
     }
 
+    public boolean isTokenRevoked(String refreshToken) {
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken);
+        return token.isRevoked();
+    }
 }

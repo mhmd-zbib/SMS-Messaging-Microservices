@@ -1,10 +1,12 @@
 package dev.zbib.server.utils;
 
+import dev.zbib.server.exception.Exceptions.UnAuthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,69 +21,57 @@ import java.util.function.Function;
  * <h2>JWT util service</h2>
  * <p>This service handles everything related to JWT configurations</p>
  */
+
+
 @Service
 public class JwtUtils {
 
     @Value("${app.jwt.secret}")
     private String secretKey;
+    private long accessExpiration = 15 * 60 * 1000; // 15 minutes in milliseconds
+    private long refreshExpiration = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
+    public String generateAccessToken(UserDetails userDetails) {
+        return generateToken("access", userDetails, accessExpiration);
+    }
 
-    private long accessExpiration = 15 ; // 15 minutes
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateToken("refresh", userDetails, refreshExpiration);
+    }
 
-    private long refreshExpiration = 7 ; // 7 days
-
-
-    /**
-     * <h2>Generate base JWT</h2>
-     * <p>This method is a general way of create JWT, we can control it to set what type of JWT we need and the usage of it</p>
-     */
-    public String generateToken(Map<String, Object> extraClaims,
-                                UserDetails userDetails,
-                                long expiration) {
+    private String generateToken(String tokenType, UserDetails userDetails, long expiration) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("tokenType", tokenType);
+        claims.put("iss", "sms-server");
+        claims.put("aud", "api  ");
         return Jwts.builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    /**
-     * <h2>Generate access token</h2>
-     * <p>This method connects to {@generateToken} by that it automatically passes the expiration date</p>
-     */
-    public String generateAccessToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, accessExpiration);
-    }
-
-    /**
-     * <h2>Generate refresh token</h2>
-     * <p>Same as {@generateAccessToken}</p>
-     */
-    public String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, refreshExpiration);
-    }
-
-    /**
-     * <h2>Extracts the username from the JWT bearer</h2>
-     * <p>This method takes the jwt token and uses the {@extractClaim} to get the username that is connected with this token</p>
-     */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    /**
-     * <h2>Validates the token</h2>
-     * <p>This method gets the date and the user of the JWT and makes sure everything is set</p>
-     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    public String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+            throw new UnAuthorizedException("unauthorized");
+        }
+        return authHeader.substring(7);
     }
 
     private Date extractExpiration(String token) {

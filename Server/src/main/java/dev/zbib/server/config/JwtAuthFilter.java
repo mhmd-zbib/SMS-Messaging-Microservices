@@ -1,5 +1,6 @@
 package dev.zbib.server.config;
 
+import dev.zbib.server.service.RefreshTokenService;
 import dev.zbib.server.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,40 +25,33 @@ import java.io.IOException;
 @Log4j2
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtUtils jwtService;
     private final UserDetailsService userDetailsService;
+    private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
+
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
-        final String username;
-        final String jwt;
-
-        final boolean isTokenValid;
-        final boolean isTokenExpired;
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (request.getServletPath().contains("/auth/login") || request.getServletPath().contains("/auth/register")) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        final String token = jwtUtils.extractToken(request);
+        final String username = jwtUtils.extractUsername(token);
 
-        log.info("Verifying: {}", request.getRequestURI());
+        authenticateUser(request, username, token);
+        filterChain.doFilter(request, response);
+    }
 
-        jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
-        log.info("Username extracted is: {} ", username);
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+    private void authenticateUser(HttpServletRequest request, String username, String token) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            isTokenValid = jwtService.isTokenValid(jwt, userDetails);
-
-            log.info("Username extracted by function is: {} ", userDetails.getUsername());
-            if (isTokenValid) {
+            if (jwtUtils.isTokenValid(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );
@@ -65,6 +59,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        filterChain.doFilter(request, response);
     }
 }
