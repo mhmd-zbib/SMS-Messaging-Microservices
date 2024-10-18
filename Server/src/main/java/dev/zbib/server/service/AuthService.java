@@ -52,6 +52,12 @@ public class AuthService {
         return generateUserTokens(user);
     }
 
+    public void logout(HttpServletRequest request) {
+        String token = jwtUtils.extractToken(request);
+        refreshTokenService.revokeRefreshToken(token);
+        return;
+    }
+
     public AuthResponse refreshToken(HttpServletRequest request) {
         String token = jwtUtils.extractToken(request);
         if (refreshTokenService.isTokenRevoked(token)) {
