@@ -69,6 +69,12 @@ public class AuthService {
         return generateUserTokens(user);
     }
 
+    public void logoutAllDevices(HttpServletRequest request) {
+        String token = jwtUtils.extractToken(request);
+        String username = jwtUtils.extractUsername(token);
+        User user = userService.getByUsername(username);
+        refreshTokenService.revokeAllUserRefreshTokens(user);
+    }
 
     private AuthResponse generateUserTokens(User user) {
         String jwtToken = jwtUtils.generateAccessToken(user);

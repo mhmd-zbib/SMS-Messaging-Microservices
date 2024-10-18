@@ -40,6 +40,13 @@ public class AuthController {
         authService.logout(request);
         return ResponseEntity.ok("Logout successful");
     }
+
+    @PostMapping("/logoutAllDevices")
+    public ResponseEntity<String> logoutAllDevices(HttpServletRequest request) {
+        authService.logoutAllDevices(request);
+        return ResponseEntity.ok("Logout successful");
+    }
+
 }
 
 
