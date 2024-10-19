@@ -11,7 +11,10 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,6 +39,7 @@ public class User implements UserDetails {
 
     @Column(length = 60)
     private String password;
+
 
     @Column(unique = true, nullable = false)
     private String email;

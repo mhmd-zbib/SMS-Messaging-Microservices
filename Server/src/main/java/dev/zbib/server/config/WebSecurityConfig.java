@@ -21,7 +21,6 @@ public class WebSecurityConfig {
     private static final String[] WHITELIST_URLS = {
             "auth/register",
             "auth/login",
-//            "auth/refresh",
             "swagger-ui/*"
     };
 

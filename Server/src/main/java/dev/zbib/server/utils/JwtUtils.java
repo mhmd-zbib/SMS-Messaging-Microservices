@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.function.Function;
  */
 
 
+@Log4j2
 @Service
 public class JwtUtils {
 
@@ -59,7 +61,7 @@ public class JwtUtils {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return username.equals(userDetails.getUsername());
     }
 
     public boolean isTokenExpired(String token) {
@@ -67,6 +69,7 @@ public class JwtUtils {
     }
 
     public String extractToken(HttpServletRequest request) {
+        log.info("request is: {}", request);
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer")) {
             throw new UnAuthorizedException("unauthorized");
