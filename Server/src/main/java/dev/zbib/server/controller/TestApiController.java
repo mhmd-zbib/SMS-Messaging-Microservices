@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/ping")
 public class TestApiController {
 
     @GetMapping
     public ResponseEntity<String> test(){
-        return ResponseEntity.ok("Hello World");
+        return ResponseEntity.ok("pong");
     }
 }

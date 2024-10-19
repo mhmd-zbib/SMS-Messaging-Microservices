@@ -1,5 +1,6 @@
 package dev.zbib.server.model.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
+    @Valid
 
     @Email(message = "Invalid email")
     @NotBlank(message = "Email is required")

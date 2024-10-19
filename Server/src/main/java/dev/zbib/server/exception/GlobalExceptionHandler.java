@@ -33,14 +33,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ResponseBody
-//    public ResponseEntity<ErrorDetails> handleInternalServerException(Exception ex) {
-//        log.error(ex.getMessage());
-//        ErrorDetails errorDetails = new ErrorDetails("Something went wrong");
-//        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ResponseEntity<ErrorDetails> handleInternalServerException(Exception ex) {
+        log.error(ex.getMessage());
+        ErrorDetails errorDetails = new ErrorDetails("Something went wrong");
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -65,12 +65,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ResponseEntity<ErrorDetails> handleDataIntegrityViolationException(Exception ex) {
         log.error(ex.getMessage());
-        ErrorDetails errorDetails = new ErrorDetails("oooops: " + ex.getMessage());
-        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
