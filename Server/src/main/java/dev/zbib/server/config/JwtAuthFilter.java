@@ -8,6 +8,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
@@ -40,7 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain) throws IOException {
+                                    @NotNull FilterChain filterChain) throws IOException, ServletException {
         try {
             log.debug("Request path: {}", request.getServletPath());
 
@@ -50,6 +51,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
 
             final String token = jwtUtils.extractToken(request);
+
+            final String tokenType = jwtUtils.extractTokenType(token);
+            if (!"access".equals(tokenType)) {
+                throw new JwtException("Invalid token type. Access token required.");
+            }
+
             final String username = jwtUtils.extractUsername(token);
             log.debug("Extracted username: {}", username);
 
@@ -62,10 +69,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT signature. Ensure your token is correct.", ex);
         } catch (MalformedJwtException ex) {
             handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Malformed JWT token. Please try again.", ex);
-        } catch (IllegalArgumentException ex) {
-            handleException(response, HttpServletResponse.SC_BAD_REQUEST, "Illegal argument provided. Check your request parameters.", ex);
-        } catch (NullPointerException ex) {
-            handleException(response, HttpServletResponse.SC_BAD_REQUEST, "Null pointer exception encountered. Contact support.", ex);
         } catch (UnAuthorizedException ex) {
             handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "You are not authorized to access this resource.", ex);
         } catch (JwtException ex) {
