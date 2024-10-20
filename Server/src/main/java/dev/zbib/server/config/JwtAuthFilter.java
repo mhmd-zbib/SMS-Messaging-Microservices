@@ -3,10 +3,7 @@ package dev.zbib.server.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.zbib.server.exception.Exceptions.UnAuthorizedException;
 import dev.zbib.server.utils.JwtUtils;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,10 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -50,9 +44,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-            final String token = jwtUtils.extractToken(request);
 
+            final String token = jwtUtils.extractToken(request);
+            if (token == null || token.isEmpty()) {
+                throw new JwtException("Token is missing.");
+            }
             final String tokenType = jwtUtils.extractTokenType(token);
+
             if (!"access".equals(tokenType) && !request.getServletPath().contains("refresh")) {
                 throw new JwtException("Invalid token type. Access token required.");
             }
@@ -63,10 +61,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authenticateUser(request, username, token);
             filterChain.doFilter(request, response);
 
-        } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UnAuthorizedException ex) {
+        } catch (UnAuthorizedException | JwtException ex) {
             handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Token error. Please check your token.", ex);
         } catch (InsufficientAuthenticationException | AccessDeniedException ex) {
             handleException(response, HttpServletResponse.SC_FORBIDDEN, "Access denied. You do not have permission to access this resource.", ex);
+        } catch (BadCredentialsException ex) {
+            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Email or password incorrect.", ex);
         } catch (LockedException | CredentialsExpiredException ex) {
             handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Authentication error. Please log in again.", ex);
         } catch (Exception ex) {
