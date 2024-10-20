@@ -53,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             final String token = jwtUtils.extractToken(request);
 
             final String tokenType = jwtUtils.extractTokenType(token);
-            if (!"access".equals(tokenType)) {
+            if (!"access".equals(tokenType) && !request.getServletPath().contains("refresh")) {
                 throw new JwtException("Invalid token type. Access token required.");
             }
 
@@ -63,26 +63,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authenticateUser(request, username, token);
             filterChain.doFilter(request, response);
 
-        } catch (ExpiredJwtException ex) {
-            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "JWT token is expired. Please log in again.", ex);
-        } catch (SignatureException ex) {
-            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT signature. Ensure your token is correct.", ex);
-        } catch (MalformedJwtException ex) {
-            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Malformed JWT token. Please try again.", ex);
-        } catch (UnAuthorizedException ex) {
-            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "You are not authorized to access this resource.", ex);
-        } catch (JwtException ex) {
-            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "JWT processing error", ex);
-        } catch (InsufficientAuthenticationException ex) {
-            handleException(response, HttpServletResponse.SC_FORBIDDEN, "Insufficient authentication. Please check your credentials.", ex);
-        } catch (CredentialsExpiredException ex) {
-            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Credentials have expired. Please log in again.", ex);
-        } catch (AccessDeniedException ex) {
+        } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UnAuthorizedException ex) {
+            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Token error. Please check your token.", ex);
+        } catch (InsufficientAuthenticationException | AccessDeniedException ex) {
             handleException(response, HttpServletResponse.SC_FORBIDDEN, "Access denied. You do not have permission to access this resource.", ex);
-        } catch (LockedException ex) {
-            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Account locked. Please contact support.", ex);
+        } catch (LockedException | CredentialsExpiredException ex) {
+            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Authentication error. Please log in again.", ex);
         } catch (Exception ex) {
-            handleException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing the JWT. Please try again later.", ex);
+            handleException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request. Please try again later.", ex);
+        }
+    }
+
+
+    private void authenticateUser(HttpServletRequest request, String username, String token) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (jwtUtils.isTokenValid(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
     }
 
@@ -104,16 +106,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 
-    private void authenticateUser(HttpServletRequest request, String username, String token) {
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtUtils.isTokenValid(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
-    }
 }

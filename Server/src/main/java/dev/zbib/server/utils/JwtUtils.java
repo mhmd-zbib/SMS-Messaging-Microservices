@@ -1,7 +1,7 @@
 package dev.zbib.server.utils;
 
-import dev.zbib.server.exception.Exceptions.UnAuthorizedException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -69,12 +69,13 @@ public class JwtUtils {
     }
 
     public String extractToken(HttpServletRequest request) {
-        log.info("request is: {}", request);
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {
-            throw new UnAuthorizedException("unauthorized");
-        }
-        return authHeader.substring(7);
+        log.info("Extracting the token!", request);
+        throw new JwtException("AFA");
+//        String authHeader = request.getHeader("Authorization");
+//        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+//            throw new UnAuthorizedException("unauthorized");
+//        }
+//        return authHeader.substring(7);
     }
 
     private Date extractExpiration(String token) {

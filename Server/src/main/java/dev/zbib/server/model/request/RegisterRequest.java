@@ -1,6 +1,7 @@
 package dev.zbib.server.model.request;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,4 +38,9 @@ public class RegisterRequest {
 
     @NotBlank(message = "Matching password is required.")
     private String matchingPassword;
+
+    @AssertTrue(message = "Passwords do not match")
+    public boolean isPasswordMatch() {
+        return this.password != null && this.password.equals(this.matchingPassword);
+    }
 }
